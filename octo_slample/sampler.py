@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import threading
+
 from octo_slample.channel import Channel
 
 CHANNEL_COUNT = 8
@@ -26,11 +28,14 @@ class Sampler:
     def play_channel(self, channel: int):
         """Play a channel.
 
+        This method is non-blocking.
+
         Channels are 1-indexed."""
         assert channel > 0
         assert channel <= CHANNEL_COUNT
 
-        self.channels[channel - 1].play()
+        x = threading.Thread(target=self.channels[channel - 1].play)
+        x.start()
 
 
 if __name__ == "__main__":
