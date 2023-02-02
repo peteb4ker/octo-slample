@@ -9,6 +9,9 @@ packages = [{include = "octo_slample"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
+pydub = "^0.25.1"
+simpleaudio = "^1.0.4"
+ffmpeg = "^1.4"
 
 
 [tool.poetry.group.dev.dependencies]

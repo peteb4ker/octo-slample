@@ -3,7 +3,7 @@
 ## Getting started
 
 ```shell
-brew install pre-commit
+brew install pre-commit ffmpeg
 ```
 
 ```shell
@@ -26,7 +26,13 @@ poetry run flake8
 
 ## Todo
 
-### Play 8 separate samples from 8 keys
+### Play 8 samples
+
+```shell
+poetry run python -m octo_slample.sampler
+```
+
+### Play 8 samples based on keypress of 8 keys
 
 ### Simple UI to play 8 samples
 
