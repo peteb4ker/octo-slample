@@ -1,4 +1,7 @@
+# Octo Slample
 
+8-channel virtual sampler for creating and organizing sample packs for the
+ALM Squid Salmple Eurorack sampler.
 
 ## Getting started
 
@@ -16,12 +19,44 @@ pre-commit run --all-files
 
 ## CI/CD
 
+### Code formatting using black
+
 ```shell
 poetry run black .
 ```
 
+### Linting
+
 ```shell
 poetry run flake8
+```
+
+### Testing
+
+Run unit tests
+
+```shell
+poetry run pytest
+```
+
+View coverage report
+
+```shell
+open htmlcov/index.html
+```
+
+### Build documentation
+
+Build docs
+
+```shell
+poetry run sphinx-build -b html . _build
+```
+
+### View documentation
+
+```shell
+open _build/index.html
 ```
 
 ## Todo
@@ -29,18 +64,29 @@ poetry run flake8
 ### Play 8 samples based on keypress of 8 keys
 
 ```shell
-poetry run python -m octo_slample.sampler
+poetry run sampler pads
+```
+
+### Play samples on a loop
+
+```shell
+poetry run sampler loop
 ```
 
 ### Simple UI to play 8 samples
 
-### Drop samples onto the  UI
+### Drop samples onto the UI
 
 ### Save samples in the correct format and location
 
 ### One shots and loops
 
 ### 16th matrix for sample trigger
+
+### Project built with github actions
+
+- Documentation available:
+- Package available:
 
 ## Licence (MIT License)
 

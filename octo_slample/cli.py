@@ -1,7 +1,12 @@
+"""Command line interface for Octo Slample.
+
+Octo Slample is a sampler that can play 8 channels at once.
+"""
 from __future__ import annotations
 
 import click
 
+import octo_slample.clock as clock
 import octo_slample.sampler as sampler
 
 
@@ -37,7 +42,13 @@ def print_menu():
 
 
 def init_sampler():
-    """Initialize the sampler."""
+    """Initialize the sampler.
+
+    Loads the sounds from the wavs directory.
+
+    Returns:
+        Sampler: The initialized sampler.
+    """
     s = sampler.Sampler()
     for x in range(1, 9):
         s.set_sound(x, f"wavs/chan-00{x}.wav")
@@ -45,9 +56,32 @@ def init_sampler():
     return s
 
 
-@click.command()
+@click.group()
+def cli():
+    """Octo Slample command line interface."""
+    pass
+
+
+@cli.command()
 def loop():
-    c = None
+    """Run the loop mode.
+
+    In loop mode, the loop is played continuously.
+    """
+    s = init_sampler()
+
+    clock.clock(s)
+
+
+@cli.command()
+def pads():
+    """Run the pads mode.
+
+    In pads mode, the user can play channels by pressing the corresponding
+    number key.
+
+    The user can quit by pressing "q".
+    """
     click.clear()
     print_menu()
 
@@ -71,4 +105,4 @@ def loop():
 
 
 if __name__ == "__main__":
-    loop()
+    cli()
