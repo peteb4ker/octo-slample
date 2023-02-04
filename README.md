@@ -67,7 +67,7 @@ open _build/index.html
 poetry run sampler pads
 ```
 
-### Play samples on a loop
+### Play samples in a loop, with pattern defined in a txt file
 
 ```shell
 poetry run sampler loop

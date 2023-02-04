@@ -32,7 +32,10 @@ from __future__ import annotations
 
 import os
 
+STEP_COUNT = 16
 PATTERN_HEADER = "1234123412341234"
+STEP_RANGE = range(1, STEP_COUNT + 1)
+VALID_PATTERN_CHARS = [" ", "x", "X", "."]
 
 
 class Pattern:
@@ -41,9 +44,13 @@ class Pattern:
     This class is used to load and store a pattern.
     """
 
-    def __init__(self):
-        """Initialize the pattern."""
-        self._pattern = []
+    def __init__(self, channel_count: int = 8):
+        """Initialize the pattern.
+
+        Args:
+            channel_count (Optional): The number of channels. Defaults to 8.
+        """
+        self._reset_pattern(channel_count)
 
     def set_pattern(self, text_pattern: str):
         """Set the pattern.
@@ -103,11 +110,28 @@ class Pattern:
             )
 
             for char in line:
-                assert char in [
-                    " ",
-                    "x",
-                    "X",
-                ], "Invalid character in pattern. Expected ' ', 'x' or 'X'."
+                assert char in VALID_PATTERN_CHARS, (
+                    "Invalid character in pattern. Expected "
+                    + "{' '.join(VALID_PATTERN_CHARS)} but got {char}."
+                )
+
+    def _reset_pattern(self, channel_count: int):
+        """Reset the pattern.
+
+        Args:
+            channel_count (int): The number of channels.
+
+        Raises:
+            AssertionError: If the channel count is invalid.
+        """
+        assert isinstance(
+            channel_count, int
+        ), "Invalid channel count. Expected an integer."
+        assert (
+            1 <= channel_count
+        ), "Invalid channel count. Expected a positive integer."
+
+        self._pattern = [[False] * STEP_COUNT for _ in range(0, channel_count)]
 
     def _convert_lines_to_pattern(self, lines: list[str]):
         """Convert the lines to a pattern.
@@ -123,10 +147,19 @@ class Pattern:
         """
         self._validate_pattern_lines(lines)
 
-        for line in lines:
-            self._pattern.append(
-                [char.lower() == "x" for char in line.rjust(16, " ")]
-            )
+        for idx_i, line in enumerate(lines):
+            for idx_j, char in enumerate(line.ljust(STEP_COUNT, ".")):
+                self._pattern[idx_i][idx_j] = char.lower() == "x"
+
+    def get_channel_count(self) -> int:
+        """Get the number of channels.
+
+        Channels are 1-indexed.
+
+        Returns:
+            The number of channels.
+        """
+        return len(self._pattern) + 1
 
     def load(self, file_path):
         """Load a pattern from a file.
@@ -156,6 +189,29 @@ class Pattern:
         """
         return self._pattern
 
+    def is_step_set(self, channel: int, step: int) -> bool:
+        """Get the step for the given channel.
+
+        Returns True if the channel should be played on the step, False
+        otherwise.
+
+        Args:
+            channel: The channel. 1-8.
+            step: The step. 1-16.
+
+        Returns:
+            True if the channel should be played on the step, False otherwise.
+        """
+        assert 1 <= channel <= self.get_channel_count(), (
+            f"Invalid channel. Expected 1-{self.get_channel_count()} "
+            + f"but got {channel}."
+        )
+        assert (
+            1 <= step <= STEP_COUNT
+        ), f"Invalid step. Expected 1-{STEP_COUNT} but got {step}."
+
+        return self._pattern[channel - 1][step - 1]
+
     @classmethod
     def from_file(cls, file: str):
         """Load a pattern from a file.
@@ -172,3 +228,27 @@ class Pattern:
         pattern = Pattern()
         pattern.load(file)
         return pattern
+
+    def _pattern_to_string(self) -> str:
+        """Get the pattern as a string.
+
+        Returns:
+            The pattern as a string.
+        """
+        pattern_string = "  " + PATTERN_HEADER + "\n"
+        for idx, channel in enumerate(self._pattern):
+            pattern_string += (
+                f"{idx} "
+                + "".join(["x" if step else "." for step in channel])
+                + "\n"
+            )
+
+        return pattern_string
+
+    def __str__(self):
+        """Get the pattern as a string.
+
+        Returns:
+            The pattern as a string.
+        """
+        return self._pattern_to_string()

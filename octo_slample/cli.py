@@ -6,8 +6,8 @@ from __future__ import annotations
 
 import click
 
-import octo_slample.clock as clock
 import octo_slample.sampler as sampler
+from octo_slample.looping_sampler import LoopingSampler
 
 
 def read_valid_channel():
@@ -68,9 +68,14 @@ def loop():
 
     In loop mode, the loop is played continuously.
     """
-    s = init_sampler()
+    s = LoopingSampler.from_pattern_file("tests/pattern.txt")
+    for x in range(1, 9):
+        s.set_sound(x, f"wavs/chan-00{x}.wav")
 
-    clock.clock(s)
+    click.echo("Playing pattern: \n")
+    click.echo(s._pattern)
+
+    s.loop()
 
 
 @cli.command()
