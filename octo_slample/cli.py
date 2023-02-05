@@ -63,12 +63,15 @@ def cli():
 
 
 @cli.command()
-def loop():
+@click.option(
+    "--pattern", default="tests/pattern2.txt", help="Pattern file", type=str
+)
+def loop(pattern: str):
     """Run the loop mode.
 
     In loop mode, the loop is played continuously.
     """
-    s = LoopingSampler.from_pattern_file("tests/pattern.txt")
+    s = LoopingSampler.from_pattern_file(pattern)
     for x in range(1, 9):
         s.set_sound(x, f"wavs/chan-00{x}.wav")
 
