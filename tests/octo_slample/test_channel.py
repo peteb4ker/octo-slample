@@ -38,15 +38,19 @@ def test_channel_init_no_sample():
     assert channel._sample is None
 
 
+def test_get_sample(channel_fixture):
+    assert channel_fixture.sample == AUDIO_SEGMENT
+
+
 def test_set_sample(channel_fixture, audio_segment_from_wav_mock):
-    channel_fixture.set_sample(DEFAULT_SOUND)
+    channel_fixture.sample = DEFAULT_SOUND
     assert audio_segment_from_wav_mock.called_once_with(DEFAULT_SOUND)
     assert channel_fixture._sample == AUDIO_SEGMENT
 
 
 def test_set_sample_none_fails(channel_fixture):
     with pytest.raises(AssertionError):
-        channel_fixture.set_sample(None)
+        channel_fixture.sample = None
 
 
 @pytest.mark.parametrize(

@@ -26,7 +26,7 @@ class Channel:
         self._number = channel_number
         self._is_loop = is_loop
         if sample is not None:
-            self.set_sample(sample)
+            self.sample = sample
         else:
             self._sample = None
 
@@ -34,6 +34,15 @@ class Channel:
         """Play the channel's sound."""
         if self._sample is not None:
             play(self._sample)
+
+    @property
+    def number(self):
+        """Return the channel's number.
+
+        Returns:
+            int: The channel's number.
+        """
+        return self._number
 
     def __str__(self):
         """Return the channel's number.
@@ -55,7 +64,17 @@ class Channel:
         """
         return self._number
 
-    def set_sample(self, sound: str):
+    @property
+    def sample(self):
+        """Return the channel's sample.
+
+        Returns:
+            str: The channel's sample.
+        """
+        return self._sample
+
+    @sample.setter
+    def sample(self, sound: str):
         """Set the channel's sound.
 
         Args:
@@ -67,11 +86,3 @@ class Channel:
         assert isinstance(sound, str), "sound must be a string"
 
         self._sample = AudioSegment.from_wav(sound)
-
-    def get_sample(self):
-        """Return the channel's sample.
-
-        Returns:
-            str: The channel's sample.
-        """
-        return self._sample
