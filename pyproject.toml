@@ -13,7 +13,7 @@ pydub = "^0.25.1"
 simpleaudio = "^1.0.4"
 ffmpeg = "^1.4"
 click = "^8.1.3"
-
+schema = "^0.7.5"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^6.0.0"
@@ -28,6 +28,8 @@ myst-parser = "^0.18.1"
 sphinx-click = "^4.4.0"
 flake8-docstrings = "^1.7.0"
 sphinx-autoapi = "^2.0.1"
+pytest-mock = "^3.10.0"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
@@ -38,8 +40,12 @@ sampler = "octo_slample.cli:cli"
 [tool.black]
 line-length = 88
 
+[tool.isort]
+profile = "black"
+
 [tool.flake8]
 max-line-length = 88
+extend-ignore = "E203"
 per-file-ignores = [
     "tests/*:D"
 ]

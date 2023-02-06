@@ -6,7 +6,7 @@ ALM Squid Salmple Eurorack sampler.
 ## Getting started
 
 ```shell
-brew install pre-commit ffmpeg
+brew install pre-commit ffmpeg hadolint
 ```
 
 ```shell
@@ -67,10 +67,10 @@ open _build/index.html
 poetry run sampler pads
 ```
 
-### Play samples in a loop, with pattern defined in a txt file
+### Play samples in a loop, with pattern and sample bank defined in a txt file
 
 ```shell
-poetry run sampler loop --pattern tests/pattern.txt
+poetry run sampler loop --pattern patterns/pattern_bank.json
 ```
 
 ### Simple UI to play 8 samples
