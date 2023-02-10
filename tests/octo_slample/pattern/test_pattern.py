@@ -25,14 +25,14 @@ def test_pattern_init_negative_channel_count_fails():
         Pattern(-1)
 
 
-def test_reset_pattern_negative_channel_count_fails(pattern_fixture):
+def test_reset_negative_channel_count_fails(pattern_fixture):
     with pytest.raises(AssertionError):
-        pattern_fixture.reset_pattern(-1)
+        pattern_fixture.reset(-1)
 
 
-def test_reset_pattern_initializes_empty_pattern(pattern_fixture):
+def test_reset_initializes_empty_pattern(pattern_fixture):
     pattern_fixture._pattern[1][1] = True
-    pattern_fixture.reset_pattern()
+    pattern_fixture.reset()
     p = pattern_fixture.pattern
 
     assert len(p) == DEFAULT_CHANNEL_COUNT
@@ -47,7 +47,7 @@ def test_channel_count_default(pattern_fixture):
 
 
 def test_channel_count_custom(pattern_fixture):
-    pattern_fixture.reset_pattern(3)
+    pattern_fixture.reset(3)
     assert len(pattern_fixture) == 3
 
 

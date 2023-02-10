@@ -18,9 +18,9 @@ class Pattern:
         Args:
             channel_count (Optional): The number of channels. Defaults to 8.
         """
-        self.reset_pattern(channel_count)
+        self.reset(channel_count)
 
-    def reset_pattern(self, channel_count: int = DEFAULT_CHANNEL_COUNT):
+    def reset(self, channel_count: int = DEFAULT_CHANNEL_COUNT):
         """Reset the pattern.
 
         Args:
