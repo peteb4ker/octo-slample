@@ -2,8 +2,8 @@
 
 This module contains the SampleBank class.
 """
-from octo_slample.channel import Channel
 from octo_slample.constants import DEFAULT_CHANNEL_COUNT
+from octo_slample.sampler.channel import Channel
 
 
 class SampleBank:
@@ -94,3 +94,19 @@ class SampleBank:
             str: A string representation of the sample bank.
         """
         return "\n".join([str(channel) for channel in self._channels])
+
+    def export(self):
+        """Export the sample bank.
+
+        This method converts the sample bank into the folder structure
+        and audio format required by the ALM Squid Salmple.
+
+        Squid Sample requires WAV files to have the following spec:
+
+        - 16 bit
+        - 44.1 kHz
+        - `Set {name}` folder name (optional)
+        -  `Bank {n}` folder name
+            -  `chan-00{x}.wav` file format
+        """
+        pass

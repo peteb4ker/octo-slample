@@ -6,8 +6,8 @@ This module contains the Sampler class.
 
 import threading
 
-from octo_slample.bank.sample_bank import SampleBank
 from octo_slample.constants import DEFAULT_CHANNEL_COUNT
+from octo_slample.sampler.sample_bank import SampleBank
 
 
 class Sampler:

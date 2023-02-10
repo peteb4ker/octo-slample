@@ -8,8 +8,8 @@ import click
 from schema import SchemaError
 
 import octo_slample.sampler as sampler
-from octo_slample import LoopingSampler
 from octo_slample.constants import DEFAULT_BPM
+from octo_slample.sampler.looping_sampler import LoopingSampler
 
 
 def read_valid_channel():

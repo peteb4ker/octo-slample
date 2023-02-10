@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from octo_slample.bank.sample_bank import SampleBank
 from octo_slample.clock import Clock
 from octo_slample.constants import (
     DEFAULT_BPM,
@@ -11,6 +10,7 @@ from octo_slample.constants import (
 )
 from octo_slample.json_pattern_bank import JsonPatternBank
 from octo_slample.pattern import Pattern
+from octo_slample.sampler.sample_bank import SampleBank
 from octo_slample.sampler.sampler import Sampler
 
 
