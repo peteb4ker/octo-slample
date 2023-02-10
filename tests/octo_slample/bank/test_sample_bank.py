@@ -39,22 +39,6 @@ def test_sample_bank_custom_channel_count():
         assert isinstance(sample_bank._channels[channel], Channel)
 
 
-@pytest.mark.parametrize(
-    "channel, sample, exception",
-    [
-        (1, SAMPLE, does_not_raise()),
-        (0, SAMPLE, pytest.raises(AssertionError)),
-        (9, SAMPLE, pytest.raises(AssertionError)),
-    ],
-    ids=["channel1", "channel0", "channel9"],
-)
-def test_sample_bank_set_sample(sample_bank, mock_channel, channel, sample, exception):
-    with exception:
-        sample_bank.set_sample(channel, sample)
-
-        mock_channel.assert_called_once_with(sample)
-
-
 def test_sample_bank_set_samples_wrong_sample_count(sample_bank):
     samples = [SAMPLE] * 4
 
@@ -80,29 +64,12 @@ def test_sample_bank_set_samples(sample_bank, mock_channel):
     ],
     ids=["channel1", "channel0", "channel9"],
 )
-def test_sample_bank_get_channel(sample_bank, channel_number, exception):
+def test_sample_bank__getitem__(sample_bank, channel_number, exception):
     with exception:
-        channel = sample_bank.get_channel(channel_number)
+        channel = sample_bank[channel_number]
 
         assert isinstance(channel, Channel)
         assert channel.number == channel_number
-
-
-@pytest.mark.parametrize(
-    "channel_number, exception",
-    [
-        (1, does_not_raise()),
-        (0, pytest.raises(AssertionError)),
-        (9, pytest.raises(AssertionError)),
-    ],
-    ids=["channel1", "channel0", "channel9"],
-)
-def test_sample_bank_get_sample(sample_bank, mock_channel, channel_number, exception):
-    with exception:
-        result = sample_bank.get_sample(channel_number)
-
-        mock_channel.assert_called_once()
-        assert result == SAMPLE
 
 
 def test_sample_bank_len(sample_bank):

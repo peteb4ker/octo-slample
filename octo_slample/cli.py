@@ -53,7 +53,7 @@ def init_sampler():
     """
     s = sampler.Sampler()
     for x in range(1, 9):
-        s.bank.set_sample(x, f"wavs/chan-00{x}.wav")
+        s.bank[x].sample = f"wavs/chan-00{x}.wav"
 
     return s
 

@@ -7,7 +7,17 @@ from octo_slample.constants import DEFAULT_CHANNEL_COUNT
 
 
 class SampleBank:
-    """A bank of samples."""
+    """A bank of samples.
+
+    The Sample Bank is a collection of channels. Each channel contains a sample.
+
+    The class is dict-like, so channels can be accessed by index. They are
+    one-indexed, so the first channel is at index 1. To access a channels sample:
+
+    ```
+    sample = sample_bank[1].sample
+    ```
+    """
 
     def __init__(self, channel_count: int = DEFAULT_CHANNEL_COUNT):
         """Initialize the sample bank.
@@ -17,19 +27,7 @@ class SampleBank:
         """
         self._channels = [Channel(x) for x in range(1, channel_count + 1)]
 
-    def set_sample(self, channel: int, sample: str):
-        """Set a channel's sample.
-
-        Channels are 1-indexed.
-
-        Args:
-            channel (int): The channel number.
-            sample (str): The path to the sample.
-        """
-        self._validate_channel(channel)
-        self._channels[channel - 1].sample = sample
-
-    def get_channel(self, channel: int):
+    def __getitem__(self, channel: int):
         """Get a channel.
 
         Channels are 1-indexed.
@@ -43,21 +41,6 @@ class SampleBank:
         self._validate_channel(channel)
 
         return self._channels[channel - 1]
-
-    def get_sample(self, channel: int):
-        """Get a channel's sample.
-
-        Channels are 1-indexed.
-
-        Args:
-            channel (int): The channel number.
-
-        Returns:
-            str: The path to the sample.
-        """
-        self._validate_channel(channel)
-
-        return self._channels[channel - 1].sample
 
     def __len__(self):
         """Return the number of channels.
@@ -76,9 +59,7 @@ class SampleBank:
         Returns:
             list: A list of samples.
         """
-        return [
-            self.get_sample(channel) for channel in range(1, len(self._channels) + 1)
-        ]
+        return [self[channel].sample for channel in range(1, len(self._channels) + 1)]
 
     @samples.setter
     def samples(self, new_samples: list[str]):
@@ -90,7 +71,7 @@ class SampleBank:
         assert len(new_samples) == len(self._channels)
 
         for channel in range(1, len(self._channels) + 1):
-            self.set_sample(channel, new_samples[channel - 1])
+            self[channel].sample = new_samples[channel - 1]
 
     def _validate_channel(self, channel: int):
         """Validate a channel number.

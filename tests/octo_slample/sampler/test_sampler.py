@@ -8,7 +8,7 @@ from octo_slample.sampler.sampler import Sampler
 
 
 @pytest.fixture
-def sampler(mock_threading_thread, mock_bank_get_channel):
+def sampler(mock_threading_thread, mock_bank___getitem__):
     return Sampler()
 
 
@@ -21,8 +21,8 @@ def mock_threading_thread(mocker):
 
 
 @pytest.fixture
-def mock_bank_get_channel(mocker):
-    return mocker.patch("octo_slample.sampler.sampler.SampleBank.get_channel")
+def mock_bank___getitem__(mocker):
+    return mocker.patch("octo_slample.sampler.sampler.SampleBank.__getitem__")
 
 
 def test_sampler(sampler):
@@ -54,12 +54,12 @@ def test_sampler_bank_set(sampler):
     ],
 )
 def test_play_channel(
-    sampler, mock_threading_thread, mock_bank_get_channel, channel, exception
+    sampler, mock_threading_thread, mock_bank___getitem__, channel, exception
 ):
     with (exception):
         sampler.play_channel(channel)
 
         mock_threading_thread.assert_called_once_with(
-            target=mock_bank_get_channel(channel).play
+            target=mock_bank___getitem__(channel).play
         )
         mock_threading_thread.start.assert_called_once()
