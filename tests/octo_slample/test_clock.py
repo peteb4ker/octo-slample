@@ -8,7 +8,10 @@ TIME = 1234567890
 
 @pytest.fixture
 def clock():
-    return Clock()
+    clock = Clock()
+    clock.start()
+
+    return clock
 
 
 @pytest.fixture

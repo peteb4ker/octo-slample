@@ -127,6 +127,7 @@ class JsonPatternBank:
         """
         pattern = cls()
         pattern.load(json_pattern)
+
         return pattern
 
     @property
@@ -146,3 +147,11 @@ class JsonPatternBank:
             The sample bank.
         """
         return self._bank
+
+    def __str__(self):
+        """Get a string representation of the pattern.
+
+        Returns:
+            A string representation of the pattern.
+        """
+        return f"{self.pattern}\n{self.bank}"

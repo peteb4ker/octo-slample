@@ -52,17 +52,7 @@ class Channel:
         Returns:
             str: The channel's number.
         """
-        return self._number
-
-    def __repr__(self):
-        """Return the channel's number.
-
-        This method is used to represent the channel's number.
-
-        Returns:
-            str: The channel's number.
-        """
-        return self._number
+        return f"{self.number}: {self.sample_path}"
 
     @property
     def sample(self):
@@ -74,15 +64,25 @@ class Channel:
         return self._sample
 
     @sample.setter
-    def sample(self, sound: str):
+    def sample(self, sample_path: str):
         """Set the channel's sound.
 
         Args:
-            sound (str): The channel's sound.
+            sample_path (str): The path to the sample.
 
         Returns:
             None
         """
-        assert isinstance(sound, str), "sound must be a string"
+        assert isinstance(sample_path, str), "sample_path must be a string"
 
-        self._sample = AudioSegment.from_wav(sound)
+        self._sample = AudioSegment.from_wav(sample_path)
+        self._sample_path = sample_path
+
+    @property
+    def sample_path(self):
+        """Return the channel's sample path.
+
+        Returns:
+            str: The channel's sample path.
+        """
+        return self._sample_path

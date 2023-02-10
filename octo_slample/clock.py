@@ -31,6 +31,7 @@ class Clock:
         self._step_count = step_count
         self._bpm = bpm
         self._steps_per_second = SECONDS_PER_MINUTE / bpm * self._step_count
+        self._is_running = False
 
     def beat(self) -> None:
         """Go to the next beat of the clock.
@@ -46,6 +47,9 @@ class Clock:
         Returns:
             None
         """
+        if self._is_running is False:
+            return self._counter
+
         time.sleep(
             1 / self._steps_per_second
             - time.time() * self._steps_per_second % 1 / self._steps_per_second
@@ -56,3 +60,37 @@ class Clock:
             self._counter = 0
 
         return self._counter
+
+    @property
+    def is_running(self) -> bool:
+        """Get whether the clock is running.
+
+        Returns:
+            bool: True if the clock is running, False otherwise.
+        """
+        return self._is_running
+
+    def start(self) -> None:
+        """Start the clock.
+
+        Returns:
+            None
+        """
+        self._is_running = True
+
+    def stop(self) -> None:
+        """Stop the clock.
+
+        Returns:
+            None
+        """
+        self._is_running = False
+
+    @property
+    def bpm(self) -> int:
+        """Get the beats per minute of the clock.
+
+        Returns:
+            int: The beats per minute of the clock.
+        """
+        return self._bpm

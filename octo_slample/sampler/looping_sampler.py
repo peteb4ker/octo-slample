@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from octo_slample.bank.sample_bank import SampleBank
 from octo_slample.clock import Clock
 from octo_slample.constants import (
     DEFAULT_BPM,
@@ -24,6 +25,7 @@ class LoopingSampler(Sampler):
         channel_count: int = DEFAULT_CHANNEL_COUNT,
         bpm: int = DEFAULT_BPM,
         pattern: Pattern = None,
+        bank: SampleBank = None,
     ):
         """Initialize the sampler.
 
@@ -31,11 +33,15 @@ class LoopingSampler(Sampler):
             channel_count (int): The number of channels. Defaults to 8.
             bpm (int): The beats per minute.    Defaults to 120.
             pattern (Pattern): The pattern to play.  Defaults to None.
+            bank (SampleBank): (Optional) The sample bank.  Defaults to None.
+                If not provided, a new empty bank will be created.
         """
         super().__init__(channel_count)
 
         self._clock = Clock(bpm=bpm)
         self._pattern = pattern
+        if bank is not None:
+            self.bank = bank
 
     @property
     def pattern(self) -> Pattern:
@@ -65,15 +71,34 @@ class LoopingSampler(Sampler):
         Returns:
             None
         """
+        while self.clock.is_running:
+            self._play_pattern()
+
+    def _play_pattern(self) -> None:
+        """Plays the entire pattern, one step at a time.
+
+        Upon playing each channel, the clock beat is advanced.
+
+        Returns:
+            None
+        """
         assert self._pattern, "pattern must be set before playing"
 
-        while True:
-            for step in range(1, DEFAULT_STEP_COUNT + 1):
-                for channel in range(1, self.channel_count() + 1):
-                    if self._pattern.is_step_set(channel, step):
-                        self.play_channel(channel)
+        for step in range(1, DEFAULT_STEP_COUNT + 1):
+            for channel in range(1, len(self) + 1):
+                if self.pattern.is_step_set(channel, step):
+                    self.play_channel(channel)
 
-                self._clock.beat()
+            self.clock.beat()
+
+    @property
+    def clock(self) -> Clock:
+        """Get the clock.
+
+        Returns:
+            Clock: The clock.
+        """
+        return self._clock
 
     @classmethod
     def from_pattern_file(cls, filename: str, bpm: int = DEFAULT_BPM) -> LoopingSampler:
@@ -89,9 +114,4 @@ class LoopingSampler(Sampler):
             raise NotImplementedError("Only JSON pattern files are supported")
 
         pattern_bank = JsonPatternBank.from_file(filename)
-
-        sampler = cls(bpm=bpm)
-        sampler.pattern(pattern_bank.pattern)
-        sampler.bank(pattern_bank.bank)
-
-        return sampler
+        return cls(bpm=bpm, pattern=pattern_bank.pattern, bank=pattern_bank.bank)

@@ -33,13 +33,11 @@ class Pattern:
 
         self._pattern = [[False] * DEFAULT_STEP_COUNT for _ in range(0, channel_count)]
 
-    def channel_count(self) -> int:
-        """Get the number of channels.
-
-        Channels are 1-indexed.
+    def __len__(self) -> int:
+        """Get the pattern length.
 
         Returns:
-            The number of channels.
+            The number of steps in the pattern.
         """
         return len(self._pattern)
 
