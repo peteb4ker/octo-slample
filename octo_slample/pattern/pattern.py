@@ -41,6 +41,19 @@ class Pattern:
         """
         return len(self._pattern)
 
+    def __getitem__(self, channel: int) -> list:
+        """Get the pattern for the given channel.
+
+        Args:
+            channel: The channel. 1-8.
+
+        Returns:
+            The pattern for the given channel.
+        """
+        self.__validate_channel_number(channel)
+
+        return self._pattern[channel - 1]
+
     @property
     def pattern(self):
         """Get the pattern.

@@ -29,7 +29,7 @@ class Sampler:
     To access a channels sample:
 
     ```
-    sample = sampler[1].sample
+    sample = sampler.bank[1].sample
     ```
 
     To get the number of channels, call `len(sampler)`.
