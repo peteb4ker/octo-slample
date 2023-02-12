@@ -13,13 +13,11 @@ from octo_slample.sampler.sample_bank import SampleBank
 class Sampler:
     """Multi-channel virtual sampler.
 
-    Defaults to 8 channels.
+    Defaults to 8 channels.  Channels are 0-indexed.
 
     This implementation does not support patterns or looping playback
     and is intended as a base class for other implementations and for
     one-shot playback.
-
-    Channels are 1-indexed to match the Squid Salmple's channel numbering.
 
     To play a channel, call the `play_channel` method with the channel
     number as an argument.
@@ -69,12 +67,12 @@ class Sampler:
 
         This method is non-blocking.
 
-        Channels are 1-indexed.
+        Channels are 0-indexed.
         """
         assert isinstance(channel, int), "channel must be an int"
-        assert channel > 0 and channel <= len(
+        assert channel >= 0 and channel < len(
             self
-        ), f"channel must be in range 1-{len(self)}"
+        ), f"channel must be in range 0-{len(self) - 1}"
 
         x = threading.Thread(target=self.bank[channel].play)
         x.start()

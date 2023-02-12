@@ -14,6 +14,8 @@ Squid Sample requires WAV files to have the following spec:
     -  `chan-00{x}.wav` file format
 """
 
+from pathlib import Path
+
 from octo_slample.sampler.channel import Channel
 from octo_slample.sampler.sample_bank import SampleBank
 
@@ -34,6 +36,9 @@ class WavWriter:
     ) -> str:
         """Build the output path for a sample.
 
+        This method converst the channel number from a zero-based index
+        to a one-based index.
+
         Args:
             bank_output_path (str): The output path for the bank.
             channel_number (int): The channel number.
@@ -41,7 +46,7 @@ class WavWriter:
         Returns:
             str: The output path for the bank.
         """
-        return f"{bank_output_path}/chan-00{channel_number}.wav"
+        return str(Path(bank_output_path, f"chan-00{channel_number + 1}.wav"))
 
     @classmethod
     def build_bank_output_path(cls, set_output_path: str, bank_number: int) -> str:
@@ -54,7 +59,17 @@ class WavWriter:
         Returns:
             str: The output path for the bank.
         """
-        return f"{set_output_path}/Bank {bank_number}"
+        return str(Path(set_output_path, f"Bank {bank_number}"))
+
+    @classmethod
+    def _create_path_if_not_exists(cls, path: str) -> None:
+        """Create the path if it does not exist.
+
+        Args:
+            path (str): The path to create.
+        """
+        if not Path(path).exists():
+            Path(path).mkdir(parents=True, exist_ok=True)
 
     @classmethod
     def write_channel(cls, channel: Channel, bank_output_path: str) -> str:
@@ -81,13 +96,13 @@ class WavWriter:
             raise ValueError(f"Channel {channel} has no sample to export")
 
         full_path = cls.build_sample_output_path(bank_output_path, channel.number)
+        cls._create_path_if_not_exists(bank_output_path)
 
         channel.sample.export(
             full_path,
             format=SQUID_SALMPLE_AUDIO_FORMAT,
             parameters=FFMPEG_EXPORT_PARAMS,
         )
-        print("foo")
 
         return full_path
 
@@ -115,9 +130,10 @@ class WavWriter:
         assert isinstance(set_output_path, str), "set_output_path must be a string"
 
         bank_output_path = cls.build_bank_output_path(set_output_path, bank_number)
+        cls._create_path_if_not_exists(bank_output_path)
 
         output_paths = [
-            cls.write_channel(channel, bank_output_path) for channel in bank
+            cls.write_channel(channel, bank_output_path) for channel in bank._channels
         ]
 
         return output_paths

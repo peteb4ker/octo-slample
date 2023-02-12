@@ -25,12 +25,12 @@ class SampleBank:
         Args:
             channel_count (Optional): The number of channels. Defaults to 8.
         """
-        self._channels = [Channel(x) for x in range(1, channel_count + 1)]
+        self._channels = [Channel(x) for x in range(0, channel_count)]
 
     def __getitem__(self, channel: int):
         """Get a channel.
 
-        Channels are 1-indexed.
+        Channels are 0-indexed.
 
         Args:
             channel (int): The channel number.
@@ -40,7 +40,7 @@ class SampleBank:
         """
         self._validate_channel(channel)
 
-        return self._channels[channel - 1]
+        return self._channels[channel]
 
     def __len__(self):
         """Return the number of channels.
@@ -59,7 +59,7 @@ class SampleBank:
         Returns:
             list: A list of samples.
         """
-        return [self[channel].sample for channel in range(1, len(self._channels) + 1)]
+        return [self[channel].sample for channel in range(0, len(self._channels))]
 
     @samples.setter
     def samples(self, new_samples: list[str]):
@@ -70,11 +70,13 @@ class SampleBank:
         """
         assert len(new_samples) == len(self._channels)
 
-        for channel in range(1, len(self._channels) + 1):
-            self[channel].sample = new_samples[channel - 1]
+        for channel in range(0, len(self._channels)):
+            self[channel].sample = new_samples[channel]
 
     def _validate_channel(self, channel: int):
         """Validate a channel number.
+
+        Channel numbers are 0-indexed.
 
         Args:
             channel (int): The channel number.
@@ -82,10 +84,9 @@ class SampleBank:
         Raises:
             AssertionError: If the channel number is invalid.
         """
-        assert channel > 0, "Channel must be greater than 0"
-        assert channel <= len(
+        assert channel >= 0 and channel < len(
             self
-        ), "Channel must be less than or equal to the number of channels"
+        ), f"channel must be between 0 and {len(self) - 1}, but got {channel}"
 
     def __str__(self):
         """Return a string representation of the sample bank.

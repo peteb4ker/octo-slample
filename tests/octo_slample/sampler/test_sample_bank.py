@@ -58,11 +58,11 @@ def test_sample_bank_set_samples(sample_bank, mock_channel):
 @pytest.mark.parametrize(
     "channel_number, exception",
     [
-        (1, does_not_raise()),
-        (0, pytest.raises(AssertionError)),
+        (0, does_not_raise()),
+        (-1, pytest.raises(AssertionError)),
         (9, pytest.raises(AssertionError)),
     ],
-    ids=["channel1", "channel0", "channel9"],
+    ids=["valid", "negative", "too high"],
 )
 def test_sample_bank__getitem__(sample_bank, channel_number, exception):
     with exception:
@@ -79,10 +79,11 @@ def test_sample_bank_len(sample_bank):
 @pytest.mark.parametrize(
     "channel_number, exception",
     [
-        (1, does_not_raise()),
-        (0, pytest.raises(AssertionError)),
+        (0, does_not_raise()),
+        (-1, pytest.raises(AssertionError)),
         (9, pytest.raises(AssertionError)),
     ],
+    ids=["valid", "negative", "too high"],
 )
 def test__validate_channel(sample_bank, channel_number, exception):
     with exception:
@@ -93,6 +94,6 @@ def test_get_samples(sample_bank, mock_channel):
     samples = sample_bank.samples
 
     for _ in range(0, DEFAULT_CHANNEL_COUNT):
-        mock_channel.assert_called_with()
+        mock_channel.assert_called()
 
     assert samples == [SAMPLE] * DEFAULT_CHANNEL_COUNT

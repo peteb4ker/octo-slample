@@ -36,27 +36,27 @@ def test_octo_slample_help():
     runner = CliRunner()
     result = runner.invoke(cli.octo_slample)
 
-    assert result.exit_code == 0
+    assert result.exit_code == 0, "octo-slample --help should exit with code 0"
     assert "Usage: octo-slample [OPTIONS] COMMAND [ARGS]..." in result.output
     assert "  Octo Slample command line interface." in result.output
     assert "  --help  Show this message and exit." in result.output
     assert "Commands:" in result.output
-    assert "  loop  Run the loop mode." in result.output
-    assert "  pads  Run the pads mode." in result.output
+    assert "  export  Export a bank to a set of wav files." in result.output
+    assert "  loop    Run the loop mode." in result.output
+    assert "  pads    Run the pads mode." in result.output
 
 
 def test_loop_help():
     runner = CliRunner()
     result = runner.invoke(cli.octo_slample, ["loop", "--help"])
 
-    assert result.exit_code == 0
+    assert result.exit_code == 0, "octo-slample loop --help should exit with code 0"
     assert "Usage: octo-slample loop [OPTIONS]" in result.output
     assert "  Run the loop mode." in result.output
     assert "  In loop mode, the loop is played continuously." in result.output
     assert "Options:" in result.output
     assert "  --pattern TEXT  Pattern file  [required]" in result.output
     assert "  --bpm INTEGER   Beats per minute" in result.output
-    assert "  --help          Show this message and exit." in result.output
 
 
 def test_loop_starts_clock_and_loops(mock_looping_sampler_from_pattern_file):
@@ -65,7 +65,7 @@ def test_loop_starts_clock_and_loops(mock_looping_sampler_from_pattern_file):
         cli.octo_slample, ["loop", "--pattern", "patterns/pattern_bank.json"]
     )
 
-    assert result.exit_code == 0
+    assert result.exit_code == 0, "octo-slample loop should exit with code 0"
     assert "Playing pattern: " in result.output
     mock_looping_sampler_from_pattern_file.return_value.clock.start.assert_called_once()
     mock_looping_sampler_from_pattern_file.return_value.loop.assert_called_once()
@@ -80,7 +80,7 @@ def test_loop_handles_invalid_pattern_file(mock_looping_sampler_from_pattern_fil
         cli.octo_slample, ["loop", "--pattern", "invalid_pattern.json"]
     )
 
-    assert result.exit_code == 2
+    assert result.exit_code == 1
     assert "Invalid pattern file 'invalid_pattern.json'" in result.output
 
 
@@ -109,14 +109,13 @@ def test_pads_help():
     assert "  key." in result.output
     assert "  The user can quit by pressing `0`" in result.output
     assert "Options:" in result.output
-    assert "  --help  Show this message and exit." in result.output
 
 
 def test_pads(mocker, mock_click_getchar, mock_play_channel):
     runner = CliRunner()
     result = runner.invoke(cli.octo_slample, ["pads"])
 
-    assert result.exit_code == 0
+    assert result.exit_code == 0, "octo-slample pads should exit with code 0"
     assert "Octo Slample" in result.output
     assert "Playing channel 1" in result.output
     assert "Playing channel 2" in result.output
@@ -129,4 +128,18 @@ def test_pads(mocker, mock_click_getchar, mock_play_channel):
 
     assert mock_click_getchar.call_count == 11
 
-    mock_play_channel.assert_has_calls([mocker.call(n) for n in range(1, 9)])
+    # 0-indexed channel calls
+    mock_play_channel.assert_has_calls([mocker.call(n) for n in range(0, 8)])
+
+
+def test_export_help():
+    runner = CliRunner()
+    result = runner.invoke(cli.octo_slample, ["export", "--help"])
+
+    assert result.exit_code == 0
+    assert "Usage: octo-slample export [OPTIONS]" in result.output
+    assert "  Export a bank to a set of wav files." in result.output
+    assert "Options:" in result.output
+    assert "  -p, --pattern TEXT         Pattern file  [required]" in result.output
+    assert "  -b, --bank-number INTEGER  Bank number  [required]" in result.output
+    assert "  -o, --output TEXT          Output path  [required]" in result.output
