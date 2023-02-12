@@ -8,12 +8,6 @@ channel on the OctoSlample.
 from pydub import AudioSegment
 from pydub.playback import play
 
-from octo_slample.constants import (
-    FFMPEG_EXPORT_PARAMS,
-    SQUID_SALMPLE_AUDIO_FORMAT,
-    SQUID_SALMPLE_FILE_TEMPLATE,
-)
-
 
 class Channel:
     """A class to represent a channel on the OctoSlample."""
@@ -32,6 +26,7 @@ class Channel:
             self.sample = sample
         else:
             self._sample = None
+            self._sample_path = None
 
     def play(self):
         """Play the channel's sound."""
@@ -89,15 +84,3 @@ class Channel:
             str: The channel's sample path.
         """
         return self._sample_path
-
-    def export(self) -> None:
-        """Export the sample to 16-bit, 44.1kHz WAV file.
-
-        This method converts the sample into the audio format required
-        by the ALM Squid Salmple.
-        """
-        self.sample.export(
-            SQUID_SALMPLE_FILE_TEMPLATE.format(self.number),
-            format=SQUID_SALMPLE_AUDIO_FORMAT,
-            parameters=FFMPEG_EXPORT_PARAMS,
-        )

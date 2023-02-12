@@ -65,3 +65,7 @@ def test_is_step_set(pattern_fixture):
 def test_is_step_set_negative_channel_fails(pattern_fixture):
     with pytest.raises(AssertionError):
         pattern_fixture.is_step_set(-1, 1)
+
+
+def test__getitem__(pattern_fixture):
+    assert pattern_fixture[1] == pattern_fixture._pattern[0]

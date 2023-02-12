@@ -56,7 +56,7 @@ def test_sampler_bank_set(sampler):
 def test_play_channel(
     sampler, mock_threading_thread, mock_bank___getitem__, channel, exception
 ):
-    with (exception):
+    with exception:
         sampler.play_channel(channel)
 
         mock_threading_thread.assert_called_once_with(
