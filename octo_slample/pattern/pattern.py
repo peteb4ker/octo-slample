@@ -12,15 +12,24 @@ class Pattern:
     This class is used to load and store a pattern.
     """
 
-    def __init__(self, channel_count: int = DEFAULT_CHANNEL_COUNT):
+    def __init__(
+        self,
+        channel_count: int = DEFAULT_CHANNEL_COUNT,
+        step_count: int = DEFAULT_STEP_COUNT,
+    ):
         """Initialize the pattern.
 
         Args:
             channel_count (Optional): The number of channels. Defaults to 8.
+            step_count (Optional): The number of steps. Defaults to 16.
         """
-        self.reset(channel_count)
+        self.reset(channel_count, step_count)
 
-    def reset(self, channel_count: int = DEFAULT_CHANNEL_COUNT):
+    def reset(
+        self,
+        channel_count: int = DEFAULT_CHANNEL_COUNT,
+        step_count: int = DEFAULT_STEP_COUNT,
+    ):
         """Reset the pattern.
 
         Args:
@@ -31,13 +40,21 @@ class Pattern:
         """
         self.__validate_channel_number(channel_count - 1)
 
-        self._pattern = [[False] * DEFAULT_STEP_COUNT for _ in range(0, channel_count)]
+        self._pattern = [[False] * step_count for _ in range(0, channel_count)]
 
     def __len__(self) -> int:
         """Get the pattern length.
 
         Returns:
             The number of steps in the pattern.
+        """
+        return len(self._pattern[0])
+
+    def channel_count(self) -> int:
+        """Get the number of channels.
+
+        Returns:
+            The number of channels.
         """
         return len(self._pattern)
 
@@ -81,7 +98,7 @@ class Pattern:
 
         Args:
             channel: The channel. 0-7.
-            step: The step. 0-15.
+            step: The step. 0-n.
 
         Returns:
             True if the channel should be played on the step, False otherwise.
@@ -89,8 +106,8 @@ class Pattern:
         self.__validate_channel_number(channel)
 
         assert (
-            0 <= step < DEFAULT_STEP_COUNT
-        ), f"Invalid step. Expected 0-{DEFAULT_STEP_COUNT-1} but got {step}."
+            0 <= step < len(self)
+        ), f"Invalid step. Expected 0-{len(self)-1} but got {step}."
 
         return self._pattern[channel][step]
 

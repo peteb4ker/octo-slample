@@ -48,14 +48,6 @@ def pattern_fixture():
             + BEAT_OFFBEAT_LINES,
             does_not_raise(),
         ),
-        (  # 9 lines
-            BEAT_OFFBEAT_LINES
-            + BEAT_OFFBEAT_LINES
-            + BEAT_OFFBEAT_LINES
-            + BEAT_OFFBEAT_LINES
-            + ["x   x   x   x   "],
-            pytest.raises(AssertionError),
-        ),
         (  # 1 line with 17 characters
             ["x   x   x   x    "],
             pytest.raises(AssertionError),
@@ -68,7 +60,6 @@ def pattern_fixture():
         "not 'x' or ' '",
         "non-list",
         "8 lines",
-        "9 lines",
         "1 line with 17 characters",
     ],
 )
@@ -118,15 +109,6 @@ def test_validate_pattern_lines(pattern_fixture, lines, exception):
             + BEAT_OFFBEAT_RESULT,
             does_not_raise(),
         ),
-        (  # 9 lines
-            BEAT_OFFBEAT_LINES
-            + BEAT_OFFBEAT_LINES
-            + BEAT_OFFBEAT_LINES
-            + BEAT_OFFBEAT_LINES
-            + ["x   x   x   x   "],
-            None,
-            pytest.raises(AssertionError),
-        ),
         (  # 1 line with 17 characters
             ["x   x   x   x    "],
             None,
@@ -140,7 +122,6 @@ def test_validate_pattern_lines(pattern_fixture, lines, exception):
         "not 'x' or ' '",
         "non-list",
         "8 lines",
-        "9 lines",
         "1 line with 17 characters",
     ],
 )

@@ -2,11 +2,10 @@
 
 This class is used to create a pattern from a list of text strings.
 """
-from octo_slample.constants import DEFAULT_STEP_COUNT
+from octo_slample.constants import DEFAULT_CHANNEL_COUNT, DEFAULT_STEP_COUNT
 from octo_slample.pattern.pattern import Pattern
 
 VALID_PATTERN_CHARS = [" ", "x", "X", "."]
-PATTERN_HEADER = "1234123412341234"
 
 
 class TextPattern(Pattern):
@@ -15,17 +14,22 @@ class TextPattern(Pattern):
     This class is used to create a pattern from a list of text strings.
     """
 
-    def __init__(self, channel_count: int = 8):
+    def __init__(
+        self,
+        channel_count: int = DEFAULT_CHANNEL_COUNT,
+        step_count: int = DEFAULT_STEP_COUNT,
+    ):
         """Initialize the pattern.
 
         Args:
             text (str): The pattern text.
             channel_count (int): The number of channels. Defaults to 8.
+            step_count (int): The number of steps. Defaults to 16.
 
         Returns:
             None
         """
-        super().__init__(channel_count)
+        super().__init__(channel_count, step_count)
 
     def _validate_pattern_lines(self, lines: list[str]) -> None:
         """Validate the pattern lines.
@@ -43,10 +47,10 @@ class TextPattern(Pattern):
             self
         ), f"Invalid number of lines. Expected 8 lines but got {len(lines)}."
 
-        # Make sure each line is 16 characters long.
+        # Make sure each line is n characters long.
         for index, line in enumerate(lines):
-            assert len(line) <= DEFAULT_STEP_COUNT, (
-                "Invalid line length. Expected up to 16 characters per line "
+            assert len(line) <= len(self), (
+                f"Invalid line length. Expected up to {len(self)} characters per line "
                 + f"but got {len(line)} characters on line {index + 1}."
             )
 
@@ -83,7 +87,7 @@ class TextPattern(Pattern):
         self._validate_pattern_lines(lines)
 
         for idx_i, line in enumerate(lines):
-            for idx_j, char in enumerate(line.ljust(DEFAULT_STEP_COUNT, ".")):
+            for idx_j, char in enumerate(line.ljust(len(self), ".")):
                 self._pattern[idx_i][idx_j] = char.lower() == "x"
 
     def __str__(self) -> str:
@@ -92,10 +96,28 @@ class TextPattern(Pattern):
         Returns:
             The pattern as a string.
         """
-        pattern_string = "  " + PATTERN_HEADER + "\n"
+        pattern_string = f"  {self.__build_pattern_header()}\n"
         for idx, channel in enumerate(self._pattern):
             pattern_string += (
                 f"{idx} " + "".join(["x" if step else "." for step in channel]) + "\n"
             )
 
         return pattern_string
+
+    def __build_pattern_header(self) -> str:
+        """Get the pattern header.
+
+        The pattern header has the following format:
+
+            1   1.1  1.2  1.3  2   2.1  2.2  2.3
+
+        Returns:
+            The pattern header.
+        """
+        pattern_header = ""
+
+        for bar in range(0, len(self) // 16):
+            for step in range(0, 4):
+                pattern_header += f"{bar+1}{'.' + str(step+1) if step > 0 else '  '} "
+
+        return pattern_header
