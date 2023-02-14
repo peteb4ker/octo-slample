@@ -8,7 +8,6 @@ from octo_slample.constants import (
     DEFAULT_CHANNEL_COUNT,
     DEFAULT_STEP_COUNT,
 )
-from octo_slample.json_pattern_bank import JsonPatternBank
 from octo_slample.pattern import Pattern
 from octo_slample.sampler.sample_bank import SampleBank
 from octo_slample.sampler.sampler import Sampler
@@ -99,19 +98,3 @@ class LoopingSampler(Sampler):
             Clock: The clock.
         """
         return self._clock
-
-    @classmethod
-    def from_pattern_file(cls, filename: str, bpm: int = DEFAULT_BPM) -> LoopingSampler:
-        """Create a sampler from a pattern file.
-
-        Args:
-            filename (str): The path to the pattern file.
-
-        Returns:
-            LoopingSampler: The sampler.
-        """
-        if not filename.endswith(".json"):
-            raise NotImplementedError("Only JSON pattern files are supported")
-
-        pattern_bank = JsonPatternBank.from_file(filename)
-        return cls(bpm=bpm, pattern=pattern_bank.pattern, bank=pattern_bank.bank)

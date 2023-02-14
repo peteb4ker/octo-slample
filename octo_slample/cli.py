@@ -10,7 +10,8 @@ from click import ClickException
 from schema import SchemaError
 
 from octo_slample.constants import DEFAULT_BPM
-from octo_slample.json_pattern_bank import JsonPatternBank
+from octo_slample.pattern.json_pattern import JsonPattern
+from octo_slample.sampler.json_sample_bank import JsonSampleBank
 from octo_slample.sampler.looping_sampler import LoopingSampler
 from octo_slample.sampler.sampler import Sampler
 from octo_slample.wav_writer import WavWriter
@@ -72,20 +73,33 @@ def octo_slample() -> None:
 
 @octo_slample.command()
 @click.option("--pattern", help="Pattern file", required=True, type=str)
+@click.option("--bank", help="Bank file", required=True, type=str)
 @click.option("--bpm", default=DEFAULT_BPM, help="Beats per minute", type=int)
-def loop(pattern: str, bpm: int) -> None:
+def loop(pattern: str, bank: str, bpm: int) -> None:
     """Run the loop mode.
 
     In loop mode, the loop is played continuously.
+
+    Args:
+        pattern (str): The pattern file.
+        bank (str): The bank file.
+        bpm (int): (Optional) Playback beats per minute.
+
+    Raises:
+        ClickException: If an error occurred.
     """
     try:
-        s = LoopingSampler.from_pattern_file(pattern, bpm=bpm)
+        s = LoopingSampler(
+            bpm=bpm,
+            pattern=JsonPattern.from_file(pattern),
+            bank=JsonSampleBank.from_file(bank),
+        )
         click.echo("Playing pattern: \n")
         click.echo(s.pattern)
         s.clock.start()
         s.loop()
     except SchemaError as e:
-        raise ClickException(f"Invalid pattern file '{pattern}': {e}")
+        raise ClickException(f"{e}")
     except Exception as e:
         raise ClickException("Unknown Error: " + str(e))
 
@@ -118,17 +132,17 @@ def pads() -> None:
 
 
 @octo_slample.command()
-@click.option("--pattern", "-p", help="Pattern file", required=True, type=str)
-@click.option("--bank-number", "-b", help="Bank number", required=True, type=int)
+@click.option("--bank", "-b", help="Bank file", required=True, type=str)
+@click.option("--bank-number", "-n", help="Bank number", required=True, type=int)
 @click.option("--output", "-o", help="Output path", required=True, type=str)
-def export(pattern: str, bank_number: int, output: str) -> None:
+def export(bank: str, bank_number: int, output: str) -> None:
     """Export a bank to a set of wav files."""
     try:
-        pattern_bank = JsonPatternBank.from_file(pattern)
-
         click.echo("Exporting bank to Squid format...")
 
-        paths = WavWriter.write_bank(pattern_bank.bank, bank_number, output)
+        paths = WavWriter.write_bank(
+            JsonSampleBank.from_file(bank), bank_number, output
+        )
 
         click.echo("Exported:")
         for path in paths:
@@ -137,7 +151,7 @@ def export(pattern: str, bank_number: int, output: str) -> None:
         click.echo("Done!")
     except Exception as e:
         traceback.print_exception(e)
-        raise ClickException(f"Invalid pattern file '{pattern}': {e}")
+        raise ClickException(f"Invalid bank file '{bank}': {e}")
 
 
 if __name__ == "__main__":

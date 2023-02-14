@@ -38,7 +38,12 @@ class Pattern:
         Raises:
             AssertionError: If the channel count is invalid.
         """
-        self.__validate_channel_number(channel_count - 1)
+        assert isinstance(
+            channel_count, int
+        ), f"Invalid channel count. Expected an integer but got {type(channel_count)}."
+        assert (
+            0 < channel_count
+        ), f"Channel must be a positive integer, but got {channel_count}."
 
         self._pattern = [[False] * step_count for _ in range(0, channel_count)]
 
@@ -120,10 +125,10 @@ class Pattern:
         Raises:
             AssertionError: If the channel number is invalid.
         """
-        assert isinstance(channel, int), (
-            "Invalid channel number. Expected an integer but got " + f"{type(channel)}."
-        )
-        assert 0 <= channel < DEFAULT_CHANNEL_COUNT, (
-            f"Invalid channel. Expected 0-{DEFAULT_CHANNEL_COUNT-1} "
+        assert isinstance(
+            channel, int
+        ), f"Invalid channel number. Expected an integer but got {type(channel)}."
+        assert 0 <= channel < self.channel_count(), (
+            f"Invalid channel. Expected 0-{self.channel_count()-1} "
             + f"but got {channel}."
         )

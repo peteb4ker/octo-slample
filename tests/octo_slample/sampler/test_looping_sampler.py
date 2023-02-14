@@ -6,7 +6,6 @@ from octo_slample.constants import (
     DEFAULT_CHANNEL_COUNT,
     DEFAULT_STEP_COUNT,
 )
-from octo_slample.json_pattern_bank import JsonPatternBank
 from octo_slample.pattern import Pattern
 from octo_slample.sampler.looping_sampler import LoopingSampler
 from octo_slample.sampler.sample_bank import SampleBank
@@ -54,19 +53,6 @@ def mock_clock_is_running(mocker):
         new_callable=mocker.PropertyMock,
         side_effect=[True, True, True, True, False],
     )
-
-
-@pytest.fixture
-def mock_json_pattern_bank_from_file(mocker):
-    m = mocker.patch("octo_slample.json_pattern_bank.JsonPatternBank.from_file")
-
-    jpb = mocker.MagicMock(spec=JsonPatternBank)
-    jpb.bank = mocker.MagicMock(spec=SampleBank)
-    jpb.pattern = mocker.MagicMock(spec=Pattern)
-
-    m.return_value = jpb
-
-    return m
 
 
 def test_looping_sampler(looping_sampler) -> None:
@@ -151,23 +137,3 @@ def test_loop_running(
 
     assert mock_play_pattern.call_count == 4
     assert mock_clock_is_running.call_count == 5
-
-
-def test_from_pattern_file(mock_json_pattern_bank_from_file) -> None:
-    looping_sampler = LoopingSampler.from_pattern_file(
-        "tests/patterns/test_pattern.json"
-    )
-
-    assert isinstance(looping_sampler, LoopingSampler)
-
-    mock_json_pattern_bank_from_file.assert_called_once_with(
-        "tests/patterns/test_pattern.json"
-    )
-
-    assert isinstance(looping_sampler.pattern, Pattern)
-    assert isinstance(looping_sampler.bank, SampleBank)
-
-
-def test_from_non_json_pattern_file() -> None:
-    with pytest.raises(NotImplementedError):
-        LoopingSampler.from_pattern_file("tests/patterns/test_pattern.txt")

@@ -102,7 +102,7 @@ poetry run octo-slample pads
 ### Play samples in a loop, with pattern and sample bank defined in a txt file
 
 ```shell
-poetry run octo-slample loop --pattern patterns/pattern_bank.json
+poetry run octo-slample loop --pattern tests/fixtures/patterns/pattern.json --bank tests/fixtures/sample_banks/sample_bank.json
 ```
 
 ### Save samples in the correct format and location
@@ -127,7 +127,7 @@ or `-o` command-line flag.
 #### To save a bank in Squid Salmple format
 
 ```shell
-poetry run octo-slample export -p patterns/pattern_bank.json -b 1 -o "tmp/Set 1"
+poetry run octo-slample export -b tests/fixtures/sample_banks/sample_bank.json -n 1 -o "tmp/Set 1"
 ```
 
 ### Simple UI to play 8 samples

@@ -1,17 +1,5 @@
 {
-    "name": "Bank 1",
     "description": "Test bank #1",
-    "pattern": [
-        "1234123412341234",
-        "x   x   x   x   ",
-        "       x x      ",
-        "                ",
-        "  x   x   x   x ",
-        "................",
-        "           x x  ",
-        "                ",
-        "                "
-    ],
     "samples": [
         { "sample": "wavs/chan-001.wav" },
         { "sample": "wavs/chan-002.wav" },
