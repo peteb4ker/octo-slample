@@ -2,7 +2,12 @@
 
 This class is used to create a pattern from a list of text strings.
 """
-from octo_slample.constants import DEFAULT_CHANNEL_COUNT, DEFAULT_STEP_COUNT
+from octo_slample.constants import (
+    BEATS_PER_BAR,
+    DEFAULT_CHANNEL_COUNT,
+    DEFAULT_STEP_COUNT,
+    SIXTEENTHS_PER_BAR,
+)
 from octo_slample.pattern.pattern import Pattern
 
 VALID_PATTERN_CHARS = [" ", "x", "X", "."]
@@ -96,7 +101,7 @@ class TextPattern(Pattern):
         Returns:
             The pattern as a string.
         """
-        pattern_string = f"  {self.__build_pattern_header()}\n"
+        pattern_string = f"  {self._build_pattern_header()}\n"
         for idx, channel in enumerate(self._pattern):
             pattern_string += (
                 f"{idx} " + "".join(["x" if step else "." for step in channel]) + "\n"
@@ -104,7 +109,7 @@ class TextPattern(Pattern):
 
         return pattern_string
 
-    def __build_pattern_header(self) -> str:
+    def _build_pattern_header(self) -> str:
         """Get the pattern header.
 
         The pattern header has the following format:
@@ -115,9 +120,13 @@ class TextPattern(Pattern):
             The pattern header.
         """
         pattern_header = ""
+        pattern_length = len(self.pattern[0])
 
-        for bar in range(0, len(self) // 16):
-            for step in range(0, 4):
-                pattern_header += f"{bar+1}{'.' + str(step+1) if step > 0 else '  '} "
+        print(pattern_length)
+        for bar in range(0, pattern_length // SIXTEENTHS_PER_BAR):
+            for step in range(0, BEATS_PER_BAR):
+                pattern_header += (
+                    f"{bar + 1}{'.' + str(step + 1) if step > 0 else '  '} "
+                )
 
         return pattern_header

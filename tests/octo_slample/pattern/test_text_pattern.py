@@ -129,3 +129,15 @@ def test_convert_lines_to_pattern(pattern_fixture, lines, expected, exception):
     with exception:
         pattern_fixture._convert_lines_to_pattern(lines)
         assert pattern_fixture._pattern == expected
+
+
+def test__build_pattern_header(pattern_fixture):
+    result = pattern_fixture._build_pattern_header()
+    assert result == "1   1.2 1.3 1.4 "
+
+
+def test__build_pattern_header_2_bar_pattern():
+    pattern_fixture = TextPattern(step_count=32)
+
+    result = pattern_fixture._build_pattern_header()
+    assert result == "1   1.2 1.3 1.4 2   2.2 2.3 2.4 "
