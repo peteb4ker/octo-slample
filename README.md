@@ -107,7 +107,7 @@ poetry run octo-slample loop --pattern tests/fixtures/patterns/pattern.json --ba
 
 ### Play a 2-bar pattern
 
-``shell
+```shell
 poetry run octo-slample loop --pattern tests/fixtures/patterns/organic_house.pattern.json --bank tests/fixtures/sample_banks/sample_bank.json
 ```
 

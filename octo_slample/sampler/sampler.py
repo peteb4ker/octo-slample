@@ -22,7 +22,8 @@ class Sampler:
     To play a channel, call the `play_channel` method with the channel
     number as an argument.
 
-    The `SampleBank` object is dict-like, so channels can be accessed
+    The :meth:`~octo_slample.sampler.sample_bank.SampleBank`
+    object is dict-like, so channels can be accessed
     by index. They are one-indexed, so the first channel is at index 1.
     To access a channels sample:
 

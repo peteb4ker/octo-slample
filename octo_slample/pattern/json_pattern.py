@@ -25,6 +25,7 @@ class JsonPattern(JsonMixin, TextPattern):
         The JSON schema has the following format:
 
         .. code-block:: json
+
             {
                 "name": "pattern name",
                 "description": "pattern description",
@@ -32,11 +33,10 @@ class JsonPattern(JsonMixin, TextPattern):
                     "1   1.2 1.3 1.4 ",
                     "x   x   x   x   ",
                     "  x   x   x   x ",
-                    ...
                 ]
             }
 
-        Note that the header row, `"1   1.2 1.3 1.4"`, is optional.
+        Note that the header row, ``"1   1.2 1.3 1.4"``, is optional.
         Header rows are recognized by the presence of a `1` in the
         first column. If a header row is present, it is removed on read.
 
