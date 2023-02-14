@@ -105,6 +105,12 @@ poetry run octo-slample pads
 poetry run octo-slample loop --pattern tests/fixtures/patterns/pattern.json --bank tests/fixtures/sample_banks/sample_bank.json
 ```
 
+### Play a 2-bar pattern
+
+``shell
+poetry run octo-slample loop --pattern tests/fixtures/patterns/organic_house.pattern.json --bank tests/fixtures/sample_banks/sample_bank.json
+```
+
 ### Save samples in the correct format and location
 
 Squid Sample requires WAV files to have the following spec:
