@@ -1,0 +1,14 @@
+{
+    "name": "Chill 1",
+    "description": "Tinlicker - Voodoo",
+    "samples": [
+        { "name": "kick", "path": "/Users/pete/Drum kits/XO/Tinlicker - Voodoo/XO-1 KICK 1 (processed) 2023-02-13_223459.wav" },
+        { "name": "tom",  "path": "/Users/pete/Drum kits/XO/Tinlicker - Voodoo/XO-2 KICK 2 (processed) 2023-02-13_223459.wav" },
+        { "path": null },
+        { "name": "clap", "path": "/Users/pete/Drum kits/XO/Tinlicker - Voodoo/XO-4 CLAP (processed) 2023-02-13_223459.wav" },
+        { "path": null },
+        { "name": "oh", "path": "/Users/pete/Drum kits/XO/Tinlicker - Voodoo/XO-6 OP HH (processed) 2023-02-13_223459.wav" },
+        { "name": "bell", "path": "/Users/pete/Drum kits/XO/Tinlicker - Voodoo/XO-7 FLEX 1 (processed) 2023-02-13_223459.wav" },
+        { "name": "bongo", "path": "/Users/pete/Drum kits/XO/Tinlicker - Voodoo/XO-8 FLEX 2 (processed) 2023-02-13_223459.wav" }
+    ]
+}

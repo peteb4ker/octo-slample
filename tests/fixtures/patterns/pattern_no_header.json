@@ -2,13 +2,13 @@
     "name": "Pattern 1",
     "description": "Test pattern #1, no header row",
     "pattern": [
-        "x   x   x   x   ",
-        "       x x      ",
-        "                ",
-        "  x   x   x   x ",
-        "................",
-        "           x x  ",
-        "                ",
-        "                "
+        {"steps": "x   x   x   x   "},
+        {"steps": "       x x      "},
+        {"steps": "                "},
+        {"steps": "  x   x   x   x "},
+        {"steps": "................"},
+        {"steps": "           x x  "},
+        {"steps": "                "},
+        {"steps": "                "}
     ]
 }

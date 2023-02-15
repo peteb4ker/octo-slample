@@ -4,7 +4,7 @@ This class is used to load and store a pattern from a JSON file.
 """
 
 
-from schema import And, Optional, Schema
+from schema import And, Optional, Or, Schema, Use
 
 from octo_slample.json import JsonMixin
 from octo_slample.pattern.text_pattern import TextPattern
@@ -49,8 +49,17 @@ class JsonPattern(JsonMixin, TextPattern):
         return Schema(
             {
                 "name": And(str, len),
-                Optional("description"): And(str, len),
-                "pattern": [And(str, len)],
+                Optional("description"): str,
+                "pattern": Or(
+                    [And(str, len)],
+                    [
+                        {
+                            Optional("name"): And(str, len),
+                            "steps": And(str, len),
+                            Optional("volume"): And(Use(float), lambda n: 0 <= n <= 1),
+                        }
+                    ],
+                ),
             }
         )
 
@@ -74,11 +83,16 @@ class JsonPattern(JsonMixin, TextPattern):
         self.schema.validate(json_pattern)
 
         # remove header row
-        if json_pattern["pattern"][0].startswith("1"):
-            json_pattern["pattern"].pop(0)
+        if (
+            "name" in json_pattern["pattern"][0]
+            and json_pattern["pattern"][0]["name"] == "header"
+        ) or (json_pattern["pattern"][0]["steps"][0] == "1"):
+            del json_pattern["pattern"][0]
 
         # reset the channel and step size
-        self.reset(len(json_pattern["pattern"]), len(json_pattern["pattern"][0]))
+        self.reset(
+            len(json_pattern["pattern"]), len(json_pattern["pattern"][0]["steps"])
+        )
 
         # Load pattern list into pattern
-        self.pattern = json_pattern["pattern"]
+        self.pattern = [channel["steps"] for channel in json_pattern["pattern"]]

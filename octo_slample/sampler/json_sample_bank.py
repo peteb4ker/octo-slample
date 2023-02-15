@@ -4,14 +4,14 @@ This class is used to load and store a bank from a JSON file.
 """
 
 
-from schema import And, Optional, Schema, Use
+from schema import And, Optional, Or, Schema
 
 from octo_slample.json import JsonMixin
 from octo_slample.sampler.sample_bank import SampleBank
 
 
 class JsonSampleBank(JsonMixin, SampleBank):
-    """Read/write a JSON :meth:`~octo_slample.sampler.sample_bank.SampleBank`.
+    """Read/write a JSON :class:`~octo_slample.sampler.sample_bank.SampleBank`.
 
     This helper class makes it easy to use JSON as a bank configuration
     format.
@@ -48,13 +48,15 @@ class JsonSampleBank(JsonMixin, SampleBank):
         return Schema(
             {
                 "name": And(str, len),
-                Optional("description"): And(str, len),
-                "samples": [
-                    {
-                        "sample": And(str, len),
-                        Optional("volume"): And(Use(float), lambda n: 0 <= n <= 1),
-                    }
-                ],
+                Optional("description"): str,
+                "samples": Or(
+                    [
+                        {
+                            Optional("name"): And(str, len),
+                            Optional("path"): Or(None, And(str, len)),
+                        }
+                    ],
+                ),
             }
         )
 
@@ -76,4 +78,4 @@ class JsonSampleBank(JsonMixin, SampleBank):
         self.schema.validate(json_bank)
 
         # load samples into channels
-        self.samples = [x["sample"] for x in json_bank["samples"]]
+        self.samples = [x["path"] for x in json_bank["samples"]]

@@ -2,13 +2,13 @@
     "name": "Bank 1",
     "description": "Test bank #1",
     "samples": [
-        { "sample": "wavs/chan-001.wav" },
-        { "sample": "wavs/chan-002.wav" },
-        { "sample": "wavs/chan-003.wav" },
-        { "sample": "wavs/chan-004.wav" },
-        { "sample": "wavs/chan-005.wav" },
-        { "sample": "wavs/chan-006.wav" },
-        { "sample": "wavs/chan-007.wav" },
-        { "sample": "wavs/chan-008.wav" }
+        { "path": "wavs/chan-001.wav" },
+        { "path": "wavs/chan-002.wav" },
+        { "path": "wavs/chan-003.wav" },
+        { "path": "wavs/chan-004.wav" },
+        { "path": "wavs/chan-005.wav" },
+        { "path": "wavs/chan-006.wav" },
+        { "path": "wavs/chan-007.wav" },
+        { "path": "wavs/chan-008.wav" }
     ]
 }
