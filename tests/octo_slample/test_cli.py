@@ -89,9 +89,9 @@ def test_loop_starts_clock_and_loops(mock_looping_sampler):
         [
             "loop",
             "--pattern",
-            "tests/fixtures/patterns/pattern.json",
+            "patterns/pattern.json",
             "--bank",
-            "tests/fixtures/sample_banks/sample_bank.json",
+            "banks/sample_bank.json",
             "--bpm",
             "120",
         ],
@@ -160,9 +160,7 @@ def test_pads_help():
 
 def test_pads(mocker, mock_click_getchar, mock_play_channel):
     runner = CliRunner()
-    result = runner.invoke(
-        cli.octo_slample, ["pads", "-b", "tests/fixtures/sample_banks/sample_bank.json"]
-    )
+    result = runner.invoke(cli.octo_slample, ["pads", "-b", "banks/sample_bank.json"])
 
     assert result.exit_code == 0, "octo-slample pads should exit with code 0"
     assert "Octo Slample" in result.output
@@ -201,11 +199,11 @@ def test_export(mock_json_sample_bank, mock_wav_writer):
         [
             "export",
             "--bank",
-            "tests/fixtures/sample_banks/sample_bank.json",
+            "banks/sample_bank.json",
             "--bank-number",
             "1",
             "--output",
-            "tests/fixtures/exported_samples",
+            "exported_samples",
         ],
     )
 
@@ -229,11 +227,11 @@ def test_export_handles_unknown_error(mock_json_sample_bank, mock_wav_writer):
         [
             "export",
             "--bank",
-            "tests/fixtures/sample_banks/sample_bank.json",
+            "banks/sample_bank.json",
             "--bank-number",
             "1",
             "--output",
-            "tests/fixtures/exported_samples",
+            "exported_samples",
         ],
     )
 

@@ -3,6 +3,8 @@
 This module contains the Pattern class.
 """
 
+from collections.abc import Sequence
+
 from octo_slample.constants import DEFAULT_CHANNEL_COUNT, DEFAULT_STEP_COUNT
 
 
@@ -46,6 +48,7 @@ class Pattern:
         ), f"Channel must be a positive integer, but got {channel_count}."
 
         self._pattern = [[False] * step_count for _ in range(0, channel_count)]
+        self._channel_volumes = [0] * channel_count
 
     def __len__(self) -> int:
         """Get the pattern length.
@@ -79,7 +82,7 @@ class Pattern:
         return self._pattern[channel]
 
     @property
-    def pattern(self):
+    def pattern(self) -> list[list[bool]]:
         """Get the pattern.
 
         The pattern is stored in a list of lists. The outer list is the 8
@@ -132,3 +135,33 @@ class Pattern:
             f"Invalid channel. Expected 0-{self.channel_count()-1} "
             + f"but got {channel}."
         )
+
+    @property
+    def channel_volumes(self) -> Sequence[float]:
+        """Get the volumes for each channel.
+
+        Returns:
+            The volumes for each channel. 0-1.
+        """
+        return self._channel_volumes
+
+    @channel_volumes.setter
+    def channel_volumes(self, volumes: list[float | int]) -> None:
+        """Set the volumes for each channel.
+
+        Args:
+            volumes (list[float | int]): The volumes for each channel. 0-1.
+
+        Raises:
+            AssertionError: If the volumes are invalid.
+        """
+        assert isinstance(
+            volumes, list
+        ), f"Invalid volumes. Expected a list but got {type(volumes)}."
+
+        assert len(volumes) == self.channel_count(), (
+            f"Invalid volumes. Expected {self.channel_count()} "
+            + f"volumes but got {len(volumes)}."
+        )
+
+        self._channel_volumes = [float(volume) for volume in volumes]

@@ -55,6 +55,11 @@ def mock_clock_is_running(mocker):
     )
 
 
+@pytest.fixture
+def mock_bank_channel_volumes(mocker):
+    return mocker.patch("octo_slample.sampler.sample_bank.SampleBank.channel_volumes")
+
+
 def test_looping_sampler(looping_sampler) -> None:
     assert isinstance(looping_sampler, LoopingSampler)
 
@@ -122,7 +127,8 @@ def test_play_pattern(
     assert mock_clock_beat.call_count == DEFAULT_STEP_COUNT
 
 
-def test_loop_not_running(looping_sampler, mock_play_pattern) -> None:
+def test_loop_not_running(looping_sampler, mock_play_pattern, pattern) -> None:
+    looping_sampler.pattern = pattern
     looping_sampler.clock.stop()
     looping_sampler.loop()
 
@@ -130,8 +136,9 @@ def test_loop_not_running(looping_sampler, mock_play_pattern) -> None:
 
 
 def test_loop_running(
-    looping_sampler, mock_play_pattern, mock_clock_is_running
+    looping_sampler, mock_play_pattern, mock_clock_is_running, pattern
 ) -> None:
+    looping_sampler.pattern = pattern
     looping_sampler.clock.start()
     looping_sampler.loop()
 

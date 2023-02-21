@@ -23,7 +23,7 @@ def test_json_sample_bank_init(json_sample_bank):
 
 def test_json_sample_bank_schema(json_sample_bank):
     """Test the JSON pattern bank schema."""
-    schema = json_sample_bank.schema
+    schema = json_sample_bank.schema()
     assert schema is not None, "Schema is None"
     assert isinstance(schema, Schema), "Schema is not a Schema object"
 
@@ -31,13 +31,13 @@ def test_json_sample_bank_schema(json_sample_bank):
 @pytest.mark.parametrize(
     ("pattern", "exception"),
     [
-        ("tests/fixtures/sample_banks/sample_bank.json", does_not_raise()),
+        ("banks/sample_bank.json", does_not_raise()),
         (
-            "tests/fixtures/sample_banks/invalid/no_name.json",
+            "banks/invalid/no_name.json",
             pytest.raises(SchemaError),
         ),
         (
-            "tests/fixtures/sample_banks/invalid/no_samples.json",
+            "banks/invalid/no_samples.json",
             pytest.raises(SchemaError),
         ),
     ],

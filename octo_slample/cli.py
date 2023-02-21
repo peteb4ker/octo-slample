@@ -4,6 +4,7 @@ Octo Slample is a sampler that can play 8 channels at once.
 """
 
 import traceback
+from typing import Union
 
 import click
 from click import ClickException
@@ -17,7 +18,7 @@ from octo_slample.sampler.sampler import Sampler
 from octo_slample.wav_writer import WavWriter
 
 
-def read_valid_channel() -> int:
+def read_valid_channel() -> Union[int, None]:
     """Read a valid channel from the user.
 
     Returns None if the user enters an invalid channel.
@@ -87,7 +88,6 @@ def loop(pattern: str, bank: str, bpm: int) -> None:
     except SchemaError as e:
         raise ClickException(f"{e}")
     except Exception as e:
-        traceback.format_exc(e)
         raise ClickException("Unknown Error: " + str(e))
 
 

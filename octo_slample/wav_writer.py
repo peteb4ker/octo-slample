@@ -40,7 +40,7 @@ class WavWriter:
 
     @classmethod
     def build_sample_output_path(
-        cls, bank_output_path: str, channel_number: int
+        cls, bank_output_path: str | Path, channel_number: int
     ) -> str:
         """Build the output path for a sample.
 
@@ -48,7 +48,7 @@ class WavWriter:
         to a one-based index.
 
         Args:
-            bank_output_path (str): The output path for the bank.
+            bank_output_path (str|Path): The output path for the bank.
             channel_number (int): The channel number.
 
         Returns:
@@ -57,11 +57,13 @@ class WavWriter:
         return str(Path(bank_output_path, f"chan-00{channel_number + 1}.wav"))
 
     @classmethod
-    def build_bank_output_path(cls, set_output_path: str, bank_number: int) -> str:
+    def build_bank_output_path(
+        cls, set_output_path: str | Path, bank_number: int
+    ) -> str:
         """Build the output path for a bank.
 
         Args:
-            set_output_path (str): The output path for the set.
+            set_output_path (str|Path): The output path for the set.
             bank_number (int): The bank number.
 
         Returns:
@@ -80,7 +82,9 @@ class WavWriter:
             Path(path).mkdir(parents=True, exist_ok=True)
 
     @classmethod
-    def write_channel(cls, channel: Channel, bank_output_path: str) -> str:
+    def write_channel(
+        cls, channel: Channel, bank_output_path: str | Path
+    ) -> str | ValueError:
         """Export the sample to 16-bit, 44.1kHz WAV file.
 
         This method converts the sample into the audio format required
@@ -88,7 +92,7 @@ class WavWriter:
 
         Args:
             channel (Channel): The channel to export.
-            output_path (str): The output path to write the sample to.
+            bank_output_path (str|Path): The output path to write the sample to.
 
         Returns:
             str: The path to the exported file, or ValueError if the
@@ -97,9 +101,9 @@ class WavWriter:
         assert isinstance(
             channel, Channel
         ), f"channel must be a Channel. Got a {type(channel)}"
-        assert isinstance(bank_output_path, str) or isinstance(
-            bank_output_path, Path
-        ), f"bank_output_path must be a string or Path. Got {bank_output_path}"
+        assert isinstance(
+            bank_output_path, (str, Path)
+        ), "bank_output_path must be a string or Path"
 
         if channel.sample is None:
             return ValueError(f"Channel {channel} has no sample to export")
@@ -119,8 +123,8 @@ class WavWriter:
 
     @classmethod
     def write_bank(
-        cls, bank: SampleBank, bank_number: int, set_output_path: str
-    ) -> list[str]:
+        cls, bank: SampleBank, bank_number: int, set_output_path: str | Path
+    ) -> list[str | ValueError]:
         """Export the bank to the ALM Squid Salmple format.
 
         The bank will be exported to a folder named `Bank {n}` within
@@ -136,9 +140,9 @@ class WavWriter:
         """
         assert isinstance(bank, SampleBank), "bank must be a SampleBank"
         assert bank_number >= 1, "bank_number must be 1 or greater"
-
-        set_output_path = str(set_output_path) if set_output_path else None
-        assert isinstance(set_output_path, str), "set_output_path must be a string"
+        assert isinstance(
+            set_output_path, (str, Path)
+        ), "set_output_path must be a string or Path"
 
         bank_output_path = cls.build_bank_output_path(set_output_path, bank_number)
         cls._create_path_if_not_exists(bank_output_path)
@@ -151,8 +155,8 @@ class WavWriter:
 
     @classmethod
     def write_set(
-        cls, banks: list[SampleBank], set_output_path: str
-    ) -> list[list[str]]:
+        cls, banks: list[SampleBank], set_output_path: str | Path
+    ) -> list[list[str | ValueError]]:
         """Export a Set of banks to the ALM Squid Salmple format.
 
         As the set is represented as a list, its assumed that the first
@@ -164,17 +168,21 @@ class WavWriter:
 
         Args:
             banks (list[SampleBank]): The set of sample banks to export.
-            set_output_path (str): The output path to write set of banks to.
+            set_output_path (str|Path): The output path to write set of banks to.
 
         Returns:
             list[list[str]]: A list of lists of paths of the exported files.
         """
         assert isinstance(banks, list), f"banks must be a list. but got a {type(banks)}"
-        set_output_path = str(set_output_path) if set_output_path else None
         assert isinstance(
-            set_output_path, str
-        ), f"set_output_path must be a string, but got a {type(set_output_path)}"
+            set_output_path, (str, Path)
+        ), "set_output_path must be a string or Path"
 
-        output_paths = [cls.write_bank(bank, set_output_path) for bank in banks]
+        output_paths = [
+            cls.write_bank(
+                bank=bank, bank_number=idx + 1, set_output_path=set_output_path
+            )
+            for idx, bank in enumerate(banks)
+        ]
 
         return output_paths

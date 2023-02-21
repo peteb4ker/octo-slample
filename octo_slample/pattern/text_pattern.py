@@ -65,7 +65,16 @@ class TextPattern(Pattern):
                     + f"[{''.join(VALID_PATTERN_CHARS)}] but got {char}."
                 )
 
-    @Pattern.pattern.setter
+    @property
+    def pattern(self) -> list[list[bool]]:
+        """Get the pattern.
+
+        Returns:
+            list[list[bool]]: The pattern.
+        """
+        return super().pattern
+
+    @pattern.setter
     def pattern(self, pattern: list[str]) -> None:
         """Set the pattern.
 
@@ -104,7 +113,10 @@ class TextPattern(Pattern):
         pattern_string = f"  {self._build_pattern_header()}\n"
         for idx, channel in enumerate(self._pattern):
             pattern_string += (
-                f"{idx} " + "".join(["x" if step else "." for step in channel]) + "\n"
+                f"{idx} "
+                + "".join(["x" if step else "." for step in channel])
+                + f" ({str(self.channel_volumes[idx]).rjust(5)} dB)"
+                + "\n"
             )
 
         return pattern_string
