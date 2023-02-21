@@ -248,3 +248,20 @@ def test_write_set(
                 ),
             ]
         )
+
+
+def test_create_path_if_not_exists_new_path_is_created(tmp_path):
+    path = tmp_path / "foo" / "bar"
+
+    WavWriter._create_path_if_not_exists(path)
+
+    assert path.exists()
+
+
+def test_create_path_if_not_exists_existing_path_is_ignored(tmp_path):
+    path = tmp_path / "foo" / "bar"
+    path.mkdir(parents=True, exist_ok=True)
+
+    WavWriter._create_path_if_not_exists(path)
+
+    assert path.exists()

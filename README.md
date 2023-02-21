@@ -83,15 +83,62 @@ poetry run sphinx-build -b html . _build
 open _build/index.html
 ```
 
-## Audio support
+## Capabilities
 
-This repository uses [pydub](https://github.com/jiaaro/pydub) for audio playback and
-conversion support.
+### Scaffold configuration files from existing sample directories
 
-Pydub depends on [ffmpeg or libav](https://github.com/jiaaro/pydub#getting-ffmpeg-set-up).
-Setup of this is platform-dependent.
+This is useful when using a sample manager such as XO.   XO generates
+folders of processed samples, albeit without the correct sample rate,
+bit rate, folder name or file names.
 
-## Todo
+The Slample CLI inspects folders of these samples to create a stub
+JSON configuration that can be augmented to map between these folders
+into the file structure required by Squid Salmple.
+
+```shell
+poetry run octo-slample init <folder containing samples>
+```
+
+If the folder does not contain WAV files it is ignored.
+
+Upon successful traversal of a sample folder, a JSON file called
+`bank.json` is written into the folder with the following contents:
+
+```json
+{
+    "name": "<folder name>",
+    "description": "",
+    "samples": [
+        { "name": "1", "path": "/fully/qualified/path/to/sample" },
+        { "name": "2", "path": "/fully/qualified/path/to/sample" },
+        { "name": "3", "path": "/fully/qualified/path/to/sample" },
+}
+```
+
+The order of the samples is based on the natural ordering of the
+WAV files within the folder.   If there are 6 WAV files in the folder,
+6 sample entries are created.
+
+Subsequent calls of `poetry run octo-slample init` on the folder
+will be ignored.   To overwrite an existing `bank.json`, run:
+
+```shell
+poetry run octo-slample init <folder containing samples> -f
+```
+
+or
+
+
+```shell
+poetry run octo-slample init <folder containing samples> --force
+```
+
+The `bank.json` file can be edited in-place to
+update `name`, `description` and the `name` of each channel.
+
+If there are channels with no sample, add `{ "path": null },`
+as a sample entry to make up the number of sample entries to
+the expected channel count (i.e. `8`).
 
 ### Play 8 samples based on keypress of 8 keys
 
@@ -149,13 +196,16 @@ are accepted.
 
 ```json
 {
-    "name": "Sample bank",
+    "name": "My Pattern",
     "pattern": [
         { "name": "header", "steps": "1234123412341234" },
         { "name": "kick",   "steps": "x   x   x   x   " },
         { "name": "tom",    "steps": "   x  x    x  x " , "volume": -3 },
 }
 ```
+
+# TODO
+
 
 ### Set the channel swing for loop playback
 
