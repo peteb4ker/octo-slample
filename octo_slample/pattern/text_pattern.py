@@ -50,7 +50,7 @@ class TextPattern(Pattern):
         # Make sure there are up to 8 lines.
         assert len(lines) <= len(
             self
-        ), f"Invalid number of lines. Expected 8 lines but got {len(lines)}."
+        ), f"Invalid number of lines. Expected {len(self)} lines but got {len(lines)}."
 
         # Make sure each line is n characters long.
         for index, line in enumerate(lines):

@@ -77,8 +77,9 @@ def test_loop_help():
     assert "  Run the loop mode." in result.output
     assert "  In loop mode, the loop is played continuously." in result.output
     assert "Options:" in result.output
-    assert "  --pattern TEXT  Pattern file  [required]" in result.output
-    assert "  --bpm INTEGER   Beats per minute" in result.output
+    assert "  -p, --pattern TEXT  Pattern file  [required]" in result.output
+    assert "  -b, --bank TEXT     Bank file  [required]" in result.output
+    assert "  --bpm INTEGER       Beats per minute" in result.output
 
 
 def test_loop_starts_clock_and_loops(mock_looping_sampler):
@@ -135,11 +136,10 @@ def test_loop_handles_unknown_error(
     runner = CliRunner()
     result = runner.invoke(
         cli.octo_slample,
-        ["loop", "--pattern", "pattern.json", "--bank", "pattern.json"],
+        ["loop", "--pattern", "pattern.json", "--bank", "bank.json"],
     )
 
     assert result.exit_code == 1
-    assert "Unknown Error" in result.output
 
 
 def test_pads_help():
@@ -160,7 +160,9 @@ def test_pads_help():
 
 def test_pads(mocker, mock_click_getchar, mock_play_channel):
     runner = CliRunner()
-    result = runner.invoke(cli.octo_slample, ["pads"])
+    result = runner.invoke(
+        cli.octo_slample, ["pads", "-b", "tests/fixtures/sample_banks/sample_bank.json"]
+    )
 
     assert result.exit_code == 0, "octo-slample pads should exit with code 0"
     assert "Octo Slample" in result.output

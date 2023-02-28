@@ -2,14 +2,14 @@
     "name": "Organic house 1",
     "description": "From https://www.attackmagazine.com/technique/beat-dissected/organic-house/",
     "pattern": [
-        "1234123412341234123412341234123412341234123412341234123412341234",
-        "x   x   x   x   x   x   x   x   x   x   x   x   x   x   x   x   ",
-        "                                                                ",
-        "    x       x       x    x  x       x       x       x    x  x   ",
-        "                                                                ",
-        " xx   x  xx   x  xx   x  xx   x  xx   x  xx   x  xx   x  xx   x ",
-        "                                                                ",
-        "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "                                                                "
+        { "steps": "1234123412341234123412341234123412341234123412341234123412341234" },
+        { "steps": "x   x   x   x   x   x   x   x   x   x   x   x   x   x   x   x   " },
+        { "steps": "                                                                " },
+        { "steps": "    x       x       x    x  x       x       x       x    x  x   " },
+        { "steps": "                                                                " },
+        { "steps": " xx   x  xx   x  xx   x  xx   x  xx   x  xx   x  xx   x  xx   x " },
+        { "steps": "                                                                " },
+        { "steps": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" },
+        { "steps": "                                                                " }
     ]
 }

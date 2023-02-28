@@ -3,28 +3,37 @@
 This module contains the Channel class that is used to represent a
 channel on the OctoSlample.
 """
+from pathlib import Path
 
+import simpleaudio as sa
+import soundfile as sf
 
-from pydub import AudioSegment
-from pydub.playback import play
+LEFT_RIGHT_CHANNEL_COUNT = 2
+SAMPLE_WIDTH = 2
 
 
 class Channel:
     """A class to represent a channel on the OctoSlample."""
 
-    def __init__(self, channel_number: int, sample: str = None):
+    def __init__(self, channel_number: int, name: str = None, sample_path: str = None):
         """Initialize the channel.
 
         Args:
             channel_number (int): The channel number.
                 Zero-indexed.
-            sample (str): The channel's sample.
+            name (str): The channel's name. Optional.
+                This is a convenience attribute for the user to
+                identify the instrument of the voice.  This is not
+                used by the Squid Salmple but helps to coordinate creating
+                :class:`~octo_slample.sampler.sample_bank.SampleBank`
+                and :class:`~octo_slample.pattern.Pattern` objects.
+            sample_path (str): Path to the channel's sample. Optional.
         """
-        assert isinstance(channel_number, int), "channel_number must be an int"
+        self.number = channel_number
+        self.name = name
 
-        self._number = channel_number
-        if sample is not None:
-            self.sample = sample
+        if sample_path is not None:
+            self.sample = sample_path
         else:
             self._sample = None
             self._sample_path = None
@@ -32,7 +41,30 @@ class Channel:
     def play(self):
         """Play the channel's sound."""
         if self._sample is not None:
-            play(self._sample)
+            sa.play_buffer(
+                self._sample, LEFT_RIGHT_CHANNEL_COUNT, SAMPLE_WIDTH, self._sample_rate
+            )
+
+    @property
+    def name(self):
+        """Return the channel's name.
+
+        Returns:
+            str: The channel's name.
+        """
+        return self._name
+
+    @name.setter
+    def name(self, name: str):
+        """Set the channel's name.
+
+        Args:
+            name (str): The channel's name.
+
+        Returns:
+            None
+        """
+        self._name = name
 
     @property
     def number(self):
@@ -43,6 +75,20 @@ class Channel:
         """
         return self._number
 
+    @number.setter
+    def number(self, number: int):
+        """Set the channel's number.
+
+        Args:
+            number (int): The channel's number.
+
+        Returns:
+            None
+        """
+        assert isinstance(number, int), "number must be an int"
+
+        self._number = number
+
     def __str__(self):
         """Return the channel's number.
 
@@ -51,7 +97,10 @@ class Channel:
         Returns:
             str: The channel's number.
         """
-        return f"{self.number}: {self.sample_path}"
+        if self.name:
+            return f"{self.number + 1}: {self.name.rjust(10)} {self.sample_path}"
+        else:
+            return f"{self.number + 1}: {self.sample_path}"
 
     @property
     def sample(self):
@@ -72,10 +121,15 @@ class Channel:
         Returns:
             None
         """
-        assert isinstance(sample_path, str), "sample_path must be a string"
-
-        self._sample = AudioSegment.from_wav(sample_path)
         self._sample_path = sample_path
+
+        if sample_path is None:
+            self._sample = None
+            return
+
+        assert Path(sample_path).exists(), f"Sample {sample_path} does not exist"
+
+        (self._sample, self._sample_rate) = sf.read(self._sample_path, dtype="int16")
 
     @property
     def sample_path(self):

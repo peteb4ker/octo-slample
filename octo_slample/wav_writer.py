@@ -4,9 +4,9 @@ This module contains a class that can be used to export banks and
 samples to the ALM Squid Salmple format.
 
 Instances of
-:meth:`~octo_slample.sampler.channel.Channel`,
-:meth:`~octo_slample.sampler.sample_bank.SampleBank`
-and sets of :meth:`~octo_slample.sampler.sample_bank.SampleBank`
+:class:`~octo_slample.sampler.channel.Channel`,
+:class:`~octo_slample.sampler.sample_bank.SampleBank`
+and sets of :class:`~octo_slample.sampler.sample_bank.SampleBank`
 can all be exported.
 
 Squid Sample requires WAV files to have the following spec:
@@ -20,10 +20,14 @@ Squid Sample requires WAV files to have the following spec:
 
 from pathlib import Path
 
+import soundfile as sf
+
 from octo_slample.sampler.channel import Channel
 from octo_slample.sampler.sample_bank import SampleBank
 
-SQUID_SALMPLE_AUDIO_FORMAT = "wav"
+SQUID_SALMPLE_AUDIO_FORMAT = "WAV"
+SQUID_SALMPLE_WAV_SAMPLE_RATE = 44100
+SQUID_SALMPLE_WAV_SUBTYPE = "PCM_16"
 FFMPEG_EXPORT_PARAMS = ["-ac", "1", "-ar", "44100", "-b:a", "16"]
 
 
@@ -87,25 +91,28 @@ class WavWriter:
             output_path (str): The output path to write the sample to.
 
         Returns:
-            str: The path to the exported file.
+            str: The path to the exported file, or ValueError if the
+                channel has no sample.
         """
         assert isinstance(
             channel, Channel
         ), f"channel must be a Channel. Got a {type(channel)}"
-        assert isinstance(
-            bank_output_path, str
-        ), f"bank_output_path must be a string. Got {bank_output_path}"
+        assert isinstance(bank_output_path, str) or isinstance(
+            bank_output_path, Path
+        ), f"bank_output_path must be a string or Path. Got {bank_output_path}"
 
         if channel.sample is None:
-            raise ValueError(f"Channel {channel} has no sample to export")
+            return ValueError(f"Channel {channel} has no sample to export")
 
         full_path = cls.build_sample_output_path(bank_output_path, channel.number)
-        cls._create_path_if_not_exists(bank_output_path)
+        cls._create_path_if_not_exists(full_path)
 
-        channel.sample.export(
+        sf.write(
             full_path,
+            channel.sample,
+            SQUID_SALMPLE_WAV_SAMPLE_RATE,
+            subtype=SQUID_SALMPLE_WAV_SUBTYPE,
             format=SQUID_SALMPLE_AUDIO_FORMAT,
-            parameters=FFMPEG_EXPORT_PARAMS,
         )
 
         return full_path

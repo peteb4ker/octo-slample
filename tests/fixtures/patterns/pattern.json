@@ -2,14 +2,14 @@
     "name": "Pattern 1",
     "description": "Test pattern #1",
     "pattern": [
-        "1234123412341234",
-        "x   x   x   x   ",
-        "       x x      ",
-        "                ",
-        "  x   x   x   x ",
-        "................",
-        "           x x  ",
-        "                ",
-        "                "
+        { "steps": "1234123412341234" },
+        { "steps": "x   x   x   x   " },
+        { "steps": "       x x      " },
+        { "steps": "                " },
+        { "steps": "  x   x   x   x " },
+        { "steps": "................" },
+        { "steps": "           x x  " },
+        { "steps": "                " },
+        { "steps": "                " }
     ]
 }

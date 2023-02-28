@@ -4,7 +4,12 @@ import pytest
 
 from octo_slample.sampler.channel import Channel
 from octo_slample.sampler.sample_bank import SampleBank
-from octo_slample.wav_writer import WavWriter
+from octo_slample.wav_writer import (
+    SQUID_SALMPLE_AUDIO_FORMAT,
+    SQUID_SALMPLE_WAV_SAMPLE_RATE,
+    SQUID_SALMPLE_WAV_SUBTYPE,
+    WavWriter,
+)
 
 
 @pytest.fixture
@@ -14,6 +19,11 @@ def mock_channel(mocker):
     type(m).number = mocker.PropertyMock(side_effect=[0, 1, 2])
 
     return m
+
+
+@pytest.fixture
+def mock_sf_write(mocker):
+    return mocker.patch("octo_slample.wav_writer.sf.write")
 
 
 @pytest.fixture
@@ -103,8 +113,8 @@ def test_build_bank_output_path(tmp_path):
         (
             pytest.lazy_fixture("mock_channel_sample_is_none"),
             pytest.lazy_fixture("tmp_path"),
-            "chan-001.wav",
-            pytest.raises(ValueError),
+            ValueError,
+            does_not_raise(),
         ),
     ],
     ids=[
@@ -114,20 +124,29 @@ def test_build_bank_output_path(tmp_path):
         "channel.sample is None",
     ],
 )
-def test_write_channel(tmp_path, channel, bank_output_path, expected, exception):
-    expected = str(tmp_path / expected)
-
+def test_write_channel(
+    tmp_path, mock_sf_write, channel, bank_output_path, expected, exception
+):
     with exception:
         result = WavWriter.write_channel(
-            channel=channel, bank_output_path=str(bank_output_path)
+            channel=channel, bank_output_path=bank_output_path
         )
 
-        assert result == expected
-        channel.sample.export.assert_called_once_with(
-            expected,
-            format="wav",
-            parameters=["-ac", "1", "-ar", "44100", "-b:a", "16"],
-        )
+        if isinstance(result, Exception):
+            assert isinstance(result, expected)
+
+            mock_sf_write.assert_not_called()
+        else:
+            expected = str(tmp_path / expected)
+            assert result == expected
+
+            mock_sf_write.assert_called_once_with(
+                expected,
+                channel.sample,
+                SQUID_SALMPLE_WAV_SAMPLE_RATE,
+                subtype=SQUID_SALMPLE_WAV_SUBTYPE,
+                format=SQUID_SALMPLE_AUDIO_FORMAT,
+            )
 
 
 @pytest.mark.parametrize(

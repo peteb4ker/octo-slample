@@ -24,7 +24,7 @@ of the Squid Salmple module, easily managing dozens or potentially hundreds of b
 ## Getting started
 
 ```shell
-brew install pre-commit ffmpeg hadolint
+brew install pre-commit hadolint
 ```
 
 ```shell
@@ -96,13 +96,13 @@ Setup of this is platform-dependent.
 ### Play 8 samples based on keypress of 8 keys
 
 ```shell
-poetry run octo-slample pads
+poetry run octo-slample pads -b tests/fixtures/sample_banks/tinlicker.voodoo.bank.json
 ```
 
 ### Play samples in a loop, with pattern and sample bank defined in a txt file
 
 ```shell
-poetry run octo-slample loop --pattern tests/fixtures/patterns/pattern.json --bank tests/fixtures/sample_banks/sample_bank.json
+poetry run octo-slample loop -p tests/fixtures/patterns/pattern.json -b tests/fixtures/sample_banks/sample_bank.json
 ```
 
 ### Play a 2-bar pattern

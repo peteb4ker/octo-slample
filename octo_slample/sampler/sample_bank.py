@@ -2,6 +2,8 @@
 
 This module contains the SampleBank class.
 """
+from typing import Union
+
 from octo_slample.constants import DEFAULT_CHANNEL_COUNT
 from octo_slample.sampler.channel import Channel
 
@@ -10,7 +12,7 @@ class SampleBank:
     """A bank of samples.
 
     The Sample Bank is a collection of
-    :meth:`~octo_slample.sampler.channel.Channel` s.
+    :class:`~octo_slample.sampler.channel.Channel` s.
     Each channel contains a sample.
 
     The class is dict-like, so channels can be accessed by index. They are
@@ -56,7 +58,17 @@ class SampleBank:
 
     @property
     def samples(self):
-        """Get all samples.
+        """The list of samples in the sample bank.
+
+        :getter: Get the list of samples.
+        :setter: Set the list of samples.
+            ``new_samples`` can be ``list[str]`` or ``list[dict[str, str]]``.
+
+            If ``list[str]``, each element is a path to a sample file.
+            If ``list[dict[str,str]``, each element is a ``dict`` with
+            the following keys:
+                * ``path``: The path to the sample file. Required, may be ``None``.
+                * ``name``: The name of the sample. Optional.
 
         Returns:
             list: A list of samples.
@@ -64,16 +76,23 @@ class SampleBank:
         return [self[channel].sample for channel in range(0, len(self._channels))]
 
     @samples.setter
-    def samples(self, new_samples: list[str]):
+    def samples(self, new_samples: Union[list[str], list[dict[str]]]):
         """Set all samples.
 
         Args:
-            samples (list): A list of samples.
+            samples (list|dict). Either a ``list`` or ``dict`` of samples.
         """
-        assert len(new_samples) == len(self._channels)
+        assert len(new_samples) == len(
+            self._channels
+        ), "samples must be the same length as the number of channels, "
+        f"but got {len(new_samples)} samples and {len(self._channels)} channels"
 
-        for channel in range(0, len(self._channels)):
-            self[channel].sample = new_samples[channel]
+        if isinstance(new_samples[0], str):
+            new_samples = [{"path": sample, "name": None} for sample in new_samples]
+
+        for channel, new_sample in enumerate(new_samples):
+            self[channel].sample = new_sample["path"]
+            self[channel].name = new_sample["name"]
 
     def _validate_channel(self, channel: int):
         """Validate a channel number.

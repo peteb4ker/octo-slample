@@ -42,27 +42,13 @@ def read_valid_channel() -> int:
     return channel
 
 
-def print_menu() -> None:
+def print_pads_menu(sampler) -> None:
     """Print the menu."""
     click.echo("Octo Slample")
     click.echo("============")
+    click.echo(sampler.bank)
     click.echo("1-8: Play channel")
     click.echo("q: Quit")
-
-
-def init_sampler() -> Sampler:
-    """Initialize the sampler.
-
-    Loads the sounds from the wavs directory.
-
-    Returns:
-        Sampler: The initialized sampler.
-    """
-    s = Sampler()
-    for x in range(0, 8):
-        s.bank[x].sample = f"wavs/chan-00{x + 1}.wav"
-
-    return s
 
 
 @click.group()
@@ -72,8 +58,8 @@ def octo_slample() -> None:
 
 
 @octo_slample.command()
-@click.option("--pattern", help="Pattern file", required=True, type=str)
-@click.option("--bank", help="Bank file", required=True, type=str)
+@click.option("--pattern", "-p", help="Pattern file", required=True, type=str)
+@click.option("--bank", "-b", help="Bank file", required=True, type=str)
 @click.option("--bpm", default=DEFAULT_BPM, help="Beats per minute", type=int)
 def loop(pattern: str, bank: str, bpm: int) -> None:
     """Run the loop mode.
@@ -101,29 +87,42 @@ def loop(pattern: str, bank: str, bpm: int) -> None:
     except SchemaError as e:
         raise ClickException(f"{e}")
     except Exception as e:
+        traceback.format_exc(e)
         raise ClickException("Unknown Error: " + str(e))
 
 
 @octo_slample.command()
-def pads() -> None:
+@click.option("--bank", "-b", help="Bank file", required=True, type=str)
+def pads(bank: str) -> None:
     """Run the pads mode.
 
     In pads mode, the user can play channels by pressing the corresponding
     number key.
 
     The user can quit by pressing `0`.
+
+    Args:
+        bank (str): The bank file.
+
+    Raises:
+        ClickException: If an error occurred.
+
+    Returns:
+        None: If the user quits.
     """
     click.clear()
-    print_menu()
 
-    s = init_sampler()
+    s = Sampler()
+    s.bank = JsonSampleBank.from_file(bank)
+
+    print_pads_menu(s)
 
     while (channel := read_valid_channel()) != 0:
         if channel is None:
             continue
 
         click.clear()
-        click.echo("Octo Slample")
+        print_pads_menu(s)
 
         # subtract 1 to convert from 1-indexed to 0-indexed
         s.play_channel(channel - 1)
