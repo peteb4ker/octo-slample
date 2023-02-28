@@ -6,10 +6,24 @@ import octo_slample.cli as cli
 
 
 @pytest.fixture
-def mock_looping_sampler_from_pattern_file(mocker):
-    m = mocker.patch("octo_slample.cli.LoopingSampler.from_pattern_file")
+def mock_looping_sampler(mocker):
+    m = mocker.patch("octo_slample.cli.LoopingSampler")
     m.clock = mocker.Mock()
     m.loop = mocker.Mock()
+
+    return m
+
+
+@pytest.fixture
+def mock_json_pattern(mocker):
+    m = mocker.patch("octo_slample.cli.JsonPattern.from_file")
+
+    return m
+
+
+@pytest.fixture
+def mock_json_sample_bank(mocker):
+    m = mocker.patch("octo_slample.cli.JsonSampleBank.from_file")
 
     return m
 
@@ -19,7 +33,7 @@ def mock_click_getchar(mocker):
     """Simulate the user clicking from 1-9, then x, then 0.
 
     1-8 are valid channels 9 is an invalid channel, which is ignored x
-    is an invalid keeypress, which is ignored
+    is an invalid keypress, which is ignored
     """
     m = mocker.patch("octo_slample.cli.click.getchar")
     m.side_effect = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "x", "0"]
@@ -59,36 +73,61 @@ def test_loop_help():
     assert "  --bpm INTEGER   Beats per minute" in result.output
 
 
-def test_loop_starts_clock_and_loops(mock_looping_sampler_from_pattern_file):
+def test_loop_starts_clock_and_loops(mock_looping_sampler):
     runner = CliRunner()
     result = runner.invoke(
-        cli.octo_slample, ["loop", "--pattern", "patterns/pattern_bank.json"]
+        cli.octo_slample,
+        [
+            "loop",
+            "--pattern",
+            "tests/fixtures/patterns/pattern.json",
+            "--bank",
+            "tests/fixtures/sample_banks/sample_bank.json",
+            "--bpm",
+            "120",
+        ],
     )
 
     assert result.exit_code == 0, "octo-slample loop should exit with code 0"
     assert "Playing pattern: " in result.output
-    mock_looping_sampler_from_pattern_file.return_value.clock.start.assert_called_once()
-    mock_looping_sampler_from_pattern_file.return_value.loop.assert_called_once()
+    mock_looping_sampler.return_value.clock.start.assert_called_once()
+    mock_looping_sampler.return_value.loop.assert_called_once()
 
 
-def test_loop_handles_invalid_pattern_file(mock_looping_sampler_from_pattern_file):
-    mock_looping_sampler_from_pattern_file.side_effect = SchemaError(
-        "Invalid pattern file"
-    )
+def test_loop_handles_invalid_pattern_file(mock_json_pattern, mock_json_sample_bank):
+    mock_json_pattern.side_effect = SchemaError("Invalid pattern file")
     runner = CliRunner()
     result = runner.invoke(
-        cli.octo_slample, ["loop", "--pattern", "invalid_pattern.json"]
+        cli.octo_slample,
+        ["loop", "--pattern", "invalid_pattern.json", "--bank", "valid_bank.json"],
     )
 
     assert result.exit_code == 1
-    assert "Invalid pattern file 'invalid_pattern.json'" in result.output
+    assert "Error: Invalid pattern file" in result.output
 
 
-def test_loop_handles_unknown_error(mock_looping_sampler_from_pattern_file):
-    mock_looping_sampler_from_pattern_file.side_effect = Exception("Unknown Error")
+def test_loop_handles_invalid_sample_bank_file(
+    mock_json_pattern, mock_json_sample_bank
+):
+    mock_json_sample_bank.side_effect = SchemaError("Invalid bank file")
     runner = CliRunner()
     result = runner.invoke(
-        cli.octo_slample, ["loop", "--pattern", "invalid_pattern.json"]
+        cli.octo_slample,
+        ["loop", "--pattern", "valid_pattern.json", "--bank", "invalid_bank.json"],
+    )
+
+    assert result.exit_code == 1
+    assert "Error: Invalid bank file" in result.output
+
+
+def test_loop_handles_unknown_error(
+    mock_looping_sampler, mock_json_pattern, mock_json_sample_bank
+):
+    mock_looping_sampler.side_effect = Exception("Unknown Error")
+    runner = CliRunner()
+    result = runner.invoke(
+        cli.octo_slample,
+        ["loop", "--pattern", "pattern.json", "--bank", "pattern.json"],
     )
 
     assert result.exit_code == 1
@@ -140,6 +179,6 @@ def test_export_help():
     assert "Usage: octo-slample export [OPTIONS]" in result.output
     assert "  Export a bank to a set of wav files." in result.output
     assert "Options:" in result.output
-    assert "  -p, --pattern TEXT         Pattern file  [required]" in result.output
-    assert "  -b, --bank-number INTEGER  Bank number  [required]" in result.output
+    assert "  -b, --bank TEXT            Bank file  [required]" in result.output
+    assert "  -n, --bank-number INTEGER  Bank number  [required]" in result.output
     assert "  -o, --output TEXT          Output path  [required]" in result.output

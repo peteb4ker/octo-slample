@@ -1,0 +1,15 @@
+{
+    "name": "Pattern 1",
+    "description": "Test pattern #1",
+    "pattern": [
+        "1234123412341234",
+        "x   x   x   x   ",
+        "       x x      ",
+        "                ",
+        "  x   x   x   x ",
+        "................",
+        "           x x  ",
+        "                ",
+        "                "
+    ]
+}
