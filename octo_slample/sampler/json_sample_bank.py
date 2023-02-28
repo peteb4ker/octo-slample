@@ -18,7 +18,6 @@ class JsonSampleBank(JsonMixin, SampleBank):
     """
 
     @classmethod
-    @property
     def schema(self):
         """Get the schema for the JSON pattern.
 
@@ -64,7 +63,7 @@ class JsonSampleBank(JsonMixin, SampleBank):
         """Load a banks from a JSON file.
 
         Validates the JSON bank against the schema defined by
-        `JsonSampleBank.schema`.
+        `JsonSampleBank.schema()).
 
         If the json document does not match the schema, a `SchemaError` is raised.
 
@@ -75,7 +74,7 @@ class JsonSampleBank(JsonMixin, SampleBank):
             SchemaError: If the JSON pattern does not match the schema.
         """
         # validate JSON pattern
-        self.schema.validate(json_bank)
+        self.schema().validate(json_bank)
 
         # load samples into channels
-        self.samples = [x["path"] for x in json_bank["samples"]]
+        self.samples = json_bank["samples"]

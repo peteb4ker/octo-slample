@@ -33,7 +33,7 @@ class Clock:
         self._steps_per_second = SECONDS_PER_MINUTE / bpm * self._step_count
         self._is_running = False
 
-    def beat(self) -> None:
+    def beat(self) -> int:
         """Go to the next beat of the clock.
 
         Wait until the next "beat" of the clock and then advance the counter.

@@ -1,0 +1,15 @@
+{
+    "name": "Tinlicker - Voodoo",
+    "description": "Tinlicker - Voodoo",
+    "pattern": [
+        { "name": "header", "steps": "1234123412341234" },
+        { "name": "kick",   "steps": "x   x   x   x   " },
+        { "name": "tom",    "steps": "   x  x    x  x " , "volume": -0 },
+        { "name": "snare",  "steps": "                " },
+        { "name": "clap",   "steps": "    x       x   " , "volume": -2 },
+        { "name": "hh",     "steps": "                " },
+        { "name": "oh",     "steps": "  x   x   x   x " , "volume": -0 },
+        { "name": "bell",   "steps": "  x  x x  x  x x" , "volume": -0 },
+        { "name": "bongo",  "steps": "  x  xxx  x  xxx" , "volume": -0 }
+    ]
+}

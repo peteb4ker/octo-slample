@@ -23,8 +23,8 @@ class LoopingSampler(Sampler):
         self,
         channel_count: int = DEFAULT_CHANNEL_COUNT,
         bpm: int = DEFAULT_BPM,
-        pattern: Pattern = None,
-        bank: SampleBank = None,
+        pattern: Pattern | None = None,
+        bank: SampleBank | None = None,
     ):
         """Initialize the sampler.
 
@@ -43,7 +43,7 @@ class LoopingSampler(Sampler):
             self.bank = bank
 
     @property
-    def pattern(self) -> Pattern:
+    def pattern(self) -> Pattern | None:
         """Get the pattern.
 
         Returns:
@@ -67,9 +67,17 @@ class LoopingSampler(Sampler):
     def loop(self) -> None:
         """Play the pattern in a loop.
 
+        Prior to playing, the channel volumes are set to the pattern's
+        channel volumes.
+
         Returns:
             None
         """
+        assert self._pattern, "pattern must be set before playing"
+        assert self._bank, "bank must be set before playing"
+
+        self.bank.channel_volumes = self.pattern.channel_volumes
+
         while self.clock.is_running:
             self._play_pattern()
 
@@ -82,10 +90,11 @@ class LoopingSampler(Sampler):
             None
         """
         assert self._pattern, "pattern must be set before playing"
+        assert self._bank, "bank must be set before playing"
 
         for step in range(0, DEFAULT_STEP_COUNT):
             for channel in range(0, len(self)):
-                if self.pattern.is_step_set(channel, step):
+                if self.pattern and self.pattern.is_step_set(channel, step):
                     self.play_channel(channel)
 
             self.clock.beat()

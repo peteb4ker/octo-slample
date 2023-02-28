@@ -1,3 +1,5 @@
+from contextlib import nullcontext as does_not_raise
+
 import pytest
 
 from octo_slample.constants import DEFAULT_CHANNEL_COUNT, DEFAULT_STEP_COUNT
@@ -70,3 +72,21 @@ def test_is_step_set_negative_channel_fails(pattern_fixture):
 
 def test__getitem__(pattern_fixture):
     assert pattern_fixture[0] == pattern_fixture._pattern[0]
+
+
+def test_channel_volumes__get(pattern_fixture):
+    assert pattern_fixture.channel_volumes == pattern_fixture._channel_volumes
+
+
+@pytest.mark.parametrize(
+    "channel_volumes,exception",
+    [
+        ([1, 2, 3, 4, 5, 6, 7, 8], does_not_raise()),
+        ([1, 2, 3], pytest.raises(AssertionError)),
+    ],
+    ids=["valid", "invalid"],
+)
+def test_channel_volumes__set(pattern_fixture, channel_volumes, exception):
+    with exception:
+        pattern_fixture.channel_volumes = channel_volumes
+        assert pattern_fixture.channel_volumes == channel_volumes

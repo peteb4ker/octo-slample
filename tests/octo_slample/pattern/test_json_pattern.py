@@ -24,7 +24,7 @@ def test_json_pattern_init(json_pattern):
 
 def test_json_pattern_schema(json_pattern):
     """Test the JSON pattern schema."""
-    schema = json_pattern.schema
+    schema = json_pattern.schema()
     assert schema is not None, "Schema is None"
     assert isinstance(schema, Schema), "Schema is not a Schema object"
 
@@ -32,10 +32,10 @@ def test_json_pattern_schema(json_pattern):
 @pytest.mark.parametrize(
     ("pattern", "exception"),
     [
-        ("tests/fixtures/patterns/pattern.json", does_not_raise()),
-        ("tests/fixtures/patterns/pattern_no_header.json", does_not_raise()),
-        ("tests/fixtures/patterns/invalid/no_name.json", pytest.raises(SchemaError)),
-        ("tests/fixtures/patterns/invalid/no_pattern.json", pytest.raises(SchemaError)),
+        ("patterns/pattern.json", does_not_raise()),
+        ("patterns/pattern_no_header.json", does_not_raise()),
+        ("patterns/invalid/no_name.json", pytest.raises(SchemaError)),
+        ("patterns/invalid/no_pattern.json", pytest.raises(SchemaError)),
     ],
     ids=["valid", "valid_no_header", "no_name", "no_pattern"],
 )

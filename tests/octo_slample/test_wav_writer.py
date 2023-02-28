@@ -237,8 +237,14 @@ def test_write_set(
 
         patched_write_bank.assert_has_calls(
             [
-                mocker.call(banks[0], set_output_path),
-                mocker.call(banks[1], set_output_path),
-                mocker.call(banks[2], set_output_path),
+                mocker.call(
+                    bank=banks[0], bank_number=1, set_output_path=set_output_path
+                ),
+                mocker.call(
+                    bank=banks[1], bank_number=2, set_output_path=set_output_path
+                ),
+                mocker.call(
+                    bank=banks[2], bank_number=3, set_output_path=set_output_path
+                ),
             ]
         )

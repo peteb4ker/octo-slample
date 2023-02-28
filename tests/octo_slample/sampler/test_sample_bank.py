@@ -7,6 +7,7 @@ from octo_slample.sampler.channel import Channel
 from octo_slample.sampler.sample_bank import SampleBank
 
 SAMPLE = "sample"
+SAMPLE_DICT = {"name": "foo", "path": SAMPLE}
 
 
 @pytest.fixture
@@ -40,19 +41,20 @@ def test_sample_bank_custom_channel_count():
 
 
 def test_sample_bank_set_samples_wrong_sample_count(sample_bank):
-    samples = [SAMPLE] * 4
+    samples = [SAMPLE_DICT] * 4
 
     with pytest.raises(AssertionError):
         sample_bank.samples = samples
 
 
 def test_sample_bank_set_samples(sample_bank, mock_channel):
-    samples = [SAMPLE] * DEFAULT_CHANNEL_COUNT
+    samples = [SAMPLE_DICT] * DEFAULT_CHANNEL_COUNT
 
     sample_bank.samples = samples
 
     for channel in range(0, DEFAULT_CHANNEL_COUNT):
-        mock_channel.assert_called_with(samples[channel])
+
+        mock_channel.assert_called_with(SAMPLE_DICT["path"])
 
 
 @pytest.mark.parametrize(
@@ -97,3 +99,11 @@ def test_get_samples(sample_bank, mock_channel):
         mock_channel.assert_called()
 
     assert samples == [SAMPLE] * DEFAULT_CHANNEL_COUNT
+
+
+def test_get_channel_volumes(sample_bank):
+    volumes = sample_bank.channel_volumes
+
+    assert isinstance(volumes, list)
+    assert len(volumes) == DEFAULT_CHANNEL_COUNT
+    assert volumes == [0.0] * DEFAULT_CHANNEL_COUNT

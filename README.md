@@ -96,19 +96,19 @@ Setup of this is platform-dependent.
 ### Play 8 samples based on keypress of 8 keys
 
 ```shell
-poetry run octo-slample pads -b tests/fixtures/sample_banks/tinlicker.voodoo.bank.json
+poetry run octo-slample pads -b banks/tinlicker.voodoo.bank.json
 ```
 
 ### Play samples in a loop, with pattern and sample bank defined in a txt file
 
 ```shell
-poetry run octo-slample loop -p tests/fixtures/patterns/pattern.json -b tests/fixtures/sample_banks/sample_bank.json
+poetry run octo-slample loop -p patterns/pattern.json -b banks/sample_bank.json
 ```
 
 ### Play a 2-bar pattern
 
 ```shell
-poetry run octo-slample loop --pattern tests/fixtures/patterns/organic_house.pattern.json --bank tests/fixtures/sample_banks/sample_bank.json
+poetry run octo-slample loop --pattern patterns/organic_house.pattern.json --bank banks/sample_bank.json
 ```
 
 ### Save samples in the correct format and location
@@ -130,11 +130,34 @@ name is taken from the `name` attribute in the bank `json` definition.
 When creating sample banks, the output directory is provided by the `--output`
 or `-o` command-line flag.
 
-#### To save a bank in Squid Salmple format
+#### Save a bank in Squid Salmple format
 
 ```shell
-poetry run octo-slample export -b tests/fixtures/sample_banks/sample_bank.json -n 1 -o "tmp/Set 1"
+poetry run octo-slample export -b banks/sample_bank.json -n 1 -o "tmp/Set 1"
 ```
+
+### Set the volume on a channel for loop playback
+
+Loop playback volume can be set, per channel, within `pattern.json` files.
+This setting only affects loop playback and does not impact the exported
+sample banks / Squid Salmple module.
+
+To set the pattern channel volume, add the `volume` attribute to pattern
+entries.  Volume is defined in decibels so, for example, a ~50% gain reduction
+on a channel can be achieved with `"volume": -3`.   Both integer and float values
+are accepted.
+
+```json
+{
+    "name": "Sample bank",
+    "pattern": [
+        { "name": "header", "steps": "1234123412341234" },
+        { "name": "kick",   "steps": "x   x   x   x   " },
+        { "name": "tom",    "steps": "   x  x    x  x " , "volume": -3 },
+}
+```
+
+### Set the channel swing for loop playback
 
 ### Simple UI to play 8 samples
 

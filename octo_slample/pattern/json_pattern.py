@@ -4,7 +4,7 @@ This class is used to load and store a pattern from a JSON file.
 """
 
 
-from schema import And, Optional, Or, Schema, Use
+from schema import And, Optional, Or, Schema
 
 from octo_slample.json import JsonMixin
 from octo_slample.pattern.text_pattern import TextPattern
@@ -18,7 +18,6 @@ class JsonPattern(JsonMixin, TextPattern):
     """
 
     @classmethod
-    @property
     def schema(self):
         """Get the schema for the JSON pattern.
 
@@ -56,7 +55,7 @@ class JsonPattern(JsonMixin, TextPattern):
                         {
                             Optional("name"): And(str, len),
                             "steps": And(str, len),
-                            Optional("volume"): And(Use(float), lambda n: 0 <= n <= 1),
+                            Optional("volume"): Or(float, int),
                         }
                     ],
                 ),
@@ -67,7 +66,7 @@ class JsonPattern(JsonMixin, TextPattern):
         """Load the pattern from a JSON file.
 
         Validates the JSON pattern against the schema defined by
-        `JsonPattern.schema`, then returns a Pattern instance.
+        `JsonPattern.schema()`, then returns a Pattern instance.
 
         If the json document does not match the schema, a `SchemaError` is raised.
 
@@ -80,7 +79,7 @@ class JsonPattern(JsonMixin, TextPattern):
             SchemaError: If the JSON pattern does not match the schema.
         """
         # validate JSON pattern
-        self.schema.validate(json_pattern)
+        self.schema().validate(json_pattern)
 
         # remove header row
         if (
@@ -96,3 +95,9 @@ class JsonPattern(JsonMixin, TextPattern):
 
         # Load pattern list into pattern
         self.pattern = [channel["steps"] for channel in json_pattern["pattern"]]
+
+        # set the channel volumes
+        self.channel_volumes = [
+            channel["volume"] if "volume" in channel else 0
+            for channel in json_pattern["pattern"]
+        ]
