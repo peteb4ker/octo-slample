@@ -6,37 +6,33 @@ from __future__ import annotations
 
 import time
 
-from octo_slample.sampler import Sampler
 
-DIVISION = 8
-NOTES = 16
+class Clock:
+    """The clock class.
 
-
-def clock(sampler: Sampler):
-    """Sampler clock.
-
-    This function is used to play the music.
-
-    Args:
-        sampler (Sampler): The sampler to play the music on.
-
-    Returns:
-        None
+    This class is used to iterate in time between beats.
     """
-    counter = 0
 
-    while counter < 60 * DIVISION:
-        print(counter)
-        time.sleep(1 / DIVISION - time.time() * DIVISION % 1 / DIVISION)
+    def __init__(self, step_count: int = 16, division: int = 8):
+        """Initialize the clock.
 
-        if counter % 4 == 0:
-            sampler.play_channel(1)
+        TODO convert division to BPM
+        """
+        self._counter = 0
+        self._step_count = step_count
+        self._division = division
 
-        if counter % 8 == 0:
-            sampler.play_channel(3)
+    def beat(self):
+        """Go to the next beat of the clock.
 
-        sampler.play_channel(4)
+        Returns:
+            None
+        """
+        time.sleep(
+            1 / self._division
+            - time.time() * self._division % 1 / self._division
+        )
 
-        counter += 1
-        if counter == NOTES:
-            counter = 0
+        self._counter += 1
+        if self._counter == self._step_count:
+            self._counter = 0

@@ -27,7 +27,8 @@ class Channel:
 
     def play(self):
         """Play the channel's sound."""
-        play(self.sound)
+        if hasattr(self, "_sound"):
+            play(self._sound)
 
     def __str__(self):
         """Return the channel's name.
@@ -58,7 +59,7 @@ class Channel:
         Returns:
             None
         """
-        self.sound = AudioSegment.from_wav(sound)
+        self._sound = AudioSegment.from_wav(sound)
 
 
 if __name__ == "__main__":
