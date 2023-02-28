@@ -5,11 +5,12 @@ Octo Slample is a sampler that can play 8 channels at once.
 
 
 import click
+from click import BadParameter, ClickException
 from schema import SchemaError
 
-import octo_slample.sampler as sampler
 from octo_slample.constants import DEFAULT_BPM
 from octo_slample.sampler.looping_sampler import LoopingSampler
+from octo_slample.sampler.sampler import Sampler
 
 
 def read_valid_channel():
@@ -51,7 +52,7 @@ def init_sampler():
     Returns:
         Sampler: The initialized sampler.
     """
-    s = sampler.Sampler()
+    s = Sampler()
     for x in range(1, 9):
         s.bank[x].sample = f"wavs/chan-00{x}.wav"
 
@@ -59,13 +60,13 @@ def init_sampler():
 
 
 @click.group()
-def cli():
+def octo_slample():
     """Octo Slample command line interface."""
     pass
 
 
-@cli.command()
-@click.option("--pattern", help="Pattern file", type=str)
+@octo_slample.command()
+@click.option("--pattern", help="Pattern file", required=True, type=str)
 @click.option("--bpm", default=DEFAULT_BPM, help="Beats per minute", type=int)
 def loop(pattern: str, bpm: int):
     """Run the loop mode.
@@ -79,37 +80,31 @@ def loop(pattern: str, bpm: int):
         s.clock.start()
         s.loop()
     except SchemaError as e:
-        click.echo(f"Invalid pattern file '{pattern}': {e}")
+        raise BadParameter(f"Invalid pattern file '{pattern}': {e}")
     except Exception as e:
-        click.echo("Unknown Error: ")
-        click.echo(e)
+        raise ClickException("Unknown Error: " + str(e))
 
 
-@cli.command()
+@octo_slample.command()
 def pads():
     """Run the pads mode.
 
     In pads mode, the user can play channels by pressing the corresponding
     number key.
 
-    The user can quit by pressing "q".
+    The user can quit by pressing `0`.
     """
     click.clear()
     print_menu()
 
     s = init_sampler()
-    c = click.getchar()
 
-    while c != "q":
-        click.clear()
-        click.echo("Octo Slample")
-
-        channel = read_valid_channel()
+    while (channel := read_valid_channel()) != 0:
         if channel is None:
             continue
 
-        if c == "q":
-            break
+        click.clear()
+        click.echo("Octo Slample")
 
         s.play_channel(channel)
 
@@ -117,4 +112,4 @@ def pads():
 
 
 if __name__ == "__main__":
-    cli()
+    octo_slample()

@@ -36,7 +36,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-sampler = "octo_slample.cli:cli"
+octo-slample = "octo_slample.cli:octo_slample"
 
 [tool.black]
 line-length = 88

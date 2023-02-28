@@ -96,13 +96,13 @@ Setup of this is platform-dependent.
 ### Play 8 samples based on keypress of 8 keys
 
 ```shell
-poetry run sampler pads
+poetry run octo_slample pads
 ```
 
 ### Play samples in a loop, with pattern and sample bank defined in a txt file
 
 ```shell
-poetry run sampler loop --pattern patterns/pattern_bank.json
+poetry run octo_slample loop --pattern patterns/pattern_bank.json
 ```
 
 ### Save samples in the correct format and location
