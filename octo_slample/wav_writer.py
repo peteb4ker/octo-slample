@@ -3,7 +3,11 @@
 This module contains a class that can be used to export banks and
 samples to the ALM Squid Salmple format.
 
-`Channels`, `SampleBanks` and sets of `SampleBanks` can all be exported.
+Instances of
+:meth:`~octo_slample.sampler.channel.Channel`,
+:meth:`~octo_slample.sampler.sample_bank.SampleBank`
+and sets of :meth:`~octo_slample.sampler.sample_bank.SampleBank`
+can all be exported.
 
 Squid Sample requires WAV files to have the following spec:
 

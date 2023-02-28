@@ -11,7 +11,7 @@ from octo_slample.sampler.sample_bank import SampleBank
 
 
 class JsonSampleBank(JsonMixin, SampleBank):
-    """Reads and writes SampleBanks from JSON.
+    """Read/write a JSON :meth:`~octo_slample.sampler.sample_bank.SampleBank`.
 
     This helper class makes it easy to use JSON as a bank configuration
     format.
@@ -25,6 +25,7 @@ class JsonSampleBank(JsonMixin, SampleBank):
         The JSON schema has the following format:
 
         .. code-block:: json
+
             {
                 "name": "pattern name",
                 "description": "pattern description",
@@ -33,11 +34,10 @@ class JsonSampleBank(JsonMixin, SampleBank):
                         "sample": "path/to/sample1.wav",
                         "sample": "path/to/sample2.wav",
                     },
-                    ...
                 ]
             }
 
-        Note that the header row, `"1234123412341234"`, is optional.
+        Note that the header row, ``"1234123412341234"``, is optional.
 
         See Also:
             https://github.com/keleshev/schema

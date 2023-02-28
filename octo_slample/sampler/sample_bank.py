@@ -9,7 +9,9 @@ from octo_slample.sampler.channel import Channel
 class SampleBank:
     """A bank of samples.
 
-    The Sample Bank is a collection of channels. Each channel contains a sample.
+    The Sample Bank is a collection of
+    :meth:`~octo_slample.sampler.channel.Channel` s.
+    Each channel contains a sample.
 
     The class is dict-like, so channels can be accessed by index. They are
     one-indexed, so the first channel is at index 1. To access a channels sample:

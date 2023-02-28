@@ -6,7 +6,7 @@ from octo_slample.constants import (
     DEFAULT_CHANNEL_COUNT,
     DEFAULT_STEP_COUNT,
 )
-from octo_slample.pattern import Pattern
+from octo_slample.pattern.pattern import Pattern
 from octo_slample.sampler.looping_sampler import LoopingSampler
 from octo_slample.sampler.sample_bank import SampleBank
 
