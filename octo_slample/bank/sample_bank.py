@@ -27,18 +27,7 @@ class SampleBank:
             sample (str): The path to the sample.
         """
         self._validate_channel(channel)
-        self._channels[channel - 1].set_sample(sample)
-
-    def set_samples(self, samples: list[str]):
-        """Set all samples.
-
-        Args:
-            samples (list): A list of samples.
-        """
-        assert len(samples) == len(self._channels)
-
-        for channel in range(1, len(samples) + 1):
-            self.set_sample(channel, samples[channel - 1])
+        self._channels[channel - 1].sample = sample
 
     def get_channel(self, channel: int):
         """Get a channel.
@@ -68,7 +57,7 @@ class SampleBank:
         """
         self._validate_channel(channel)
 
-        return self._channels[channel - 1].get_sample()
+        return self._channels[channel - 1].sample
 
     def channel_count(self):
         """Return the number of channels.
@@ -80,13 +69,28 @@ class SampleBank:
         """
         return len(self._channels)
 
-    def get_samples(self):
+    @property
+    def samples(self):
         """Get all samples.
 
         Returns:
             list: A list of samples.
         """
-        return self._samples
+        return [
+            self.get_sample(channel) for channel in range(1, len(self._channels) + 1)
+        ]
+
+    @samples.setter
+    def samples(self, new_samples: list[str]):
+        """Set all samples.
+
+        Args:
+            samples (list): A list of samples.
+        """
+        assert len(new_samples) == len(self._channels)
+
+        for channel in range(1, len(self._channels) + 1):
+            self.set_sample(channel, new_samples[channel - 1])
 
     def _validate_channel(self, channel: int):
         """Validate a channel number.
