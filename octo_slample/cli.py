@@ -2,12 +2,14 @@
 
 Octo Slample is a sampler that can play 8 channels at once.
 """
-from __future__ import annotations
+
 
 import click
+from schema import SchemaError
 
 import octo_slample.sampler as sampler
-from octo_slample.looping_sampler import LoopingSampler
+from octo_slample import LoopingSampler
+from octo_slample.constants import DEFAULT_BPM
 
 
 def read_valid_channel():
@@ -51,7 +53,7 @@ def init_sampler():
     """
     s = sampler.Sampler()
     for x in range(1, 9):
-        s.set_sound(x, f"wavs/chan-00{x}.wav")
+        s.bank.set_sample(x, f"wavs/chan-00{x}.wav")
 
     return s
 
@@ -64,21 +66,24 @@ def cli():
 
 @cli.command()
 @click.option(
-    "--pattern", default="tests/pattern2.txt", help="Pattern file", type=str
+    "--pattern", default="patterns/pattern2.txt", help="Pattern file", type=str
 )
-def loop(pattern: str):
+@click.option("--bpm", default=DEFAULT_BPM, help="Beats per minute", type=int)
+def loop(pattern: str, bpm: int):
     """Run the loop mode.
 
     In loop mode, the loop is played continuously.
     """
-    s = LoopingSampler.from_pattern_file(pattern)
-    for x in range(1, 9):
-        s.set_sound(x, f"wavs/chan-00{x}.wav")
-
-    click.echo("Playing pattern: \n")
-    click.echo(s._pattern)
-
-    s.loop()
+    try:
+        s = LoopingSampler.from_pattern_file(pattern, bpm=bpm)
+        click.echo("Playing pattern: \n")
+        click.echo(s._pattern)
+        s.loop()
+    except SchemaError as e:
+        click.echo(f"Invalid pattern file '{pattern}': {e}")
+    except Exception as e:
+        click.echo("Unknown Error: ")
+        click.echo(e)
 
 
 @cli.command()

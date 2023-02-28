@@ -3,7 +3,7 @@
 This module contains the Channel class that is used to represent a channel on
 the OctoSlample.
 """
-from __future__ import annotations
+
 
 from pydub import AudioSegment
 from pydub.playback import play
@@ -12,45 +12,50 @@ from pydub.playback import play
 class Channel:
     """A class to represent a channel on the OctoSlample."""
 
-    def __init__(self, name: int, sound: str = None, one_shot: bool = False):
+    def __init__(self, channel_number: int, sample: str = None, is_loop: bool = False):
         """Initialize the channel.
 
         Args:
-            name (int): The channel's name.
-            sound (str): The channel's sound.
-            one_shot (bool): Whether the channel is one-shot.
+            channel_number (int): The channel's name.
+            sample (str): The channel's sample.
+            is_loop (bool): Whether the channel plays a looping sample or not.
+                If False, the channel plays a one-shot sample.
         """
-        self.name = name
-        self.one_shot = one_shot
-        if sound:
-            self.set_sound(sound)
+        assert isinstance(channel_number, int), "channel_number must be an int"
+
+        self._number = channel_number
+        self._is_loop = is_loop
+        if sample is not None:
+            self.set_sample(sample)
+        else:
+            self._sample = None
 
     def play(self):
         """Play the channel's sound."""
-        if hasattr(self, "_sound"):
-            play(self._sound)
+        if self._sample is not None:
+            play(self._sample)
 
     def __str__(self):
-        """Return the channel's name.
+        """Return the channel's number.
 
-        This method is used to print the channel's name.
+        This method is used to print the channel's number.
 
         Returns:
-            str: The channel's name.
+            str: The channel's number.
         """
-        return self.name
+        return self._number
 
     def __repr__(self):
-        """Return the channel's name.
+        """Return the channel's number.
 
-        This method is used to represent the channel's name.
+        This method is used to represent the channel's number.
 
         Returns:
-            str: The channel's name.
+            str: The channel's number.
         """
-        return self.name
+        return self._number
 
-    def set_sound(self, sound: str):
+    def set_sample(self, sound: str):
         """Set the channel's sound.
 
         Args:
@@ -59,10 +64,14 @@ class Channel:
         Returns:
             None
         """
-        self._sound = AudioSegment.from_wav(sound)
+        assert isinstance(sound, str), "sound must be a string"
 
+        self._sample = AudioSegment.from_wav(sound)
 
-if __name__ == "__main__":
-    for x in range(1, 9):
-        channel = Channel(x, f"wavs/chan-00{x}.wav")
-        channel.play()
+    def get_sample(self):
+        """Return the channel's sample.
+
+        Returns:
+            str: The channel's sample.
+        """
+        return self._sample
