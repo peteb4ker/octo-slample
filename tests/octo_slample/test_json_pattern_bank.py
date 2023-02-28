@@ -3,9 +3,9 @@ from contextlib import nullcontext as does_not_raise
 import pytest
 from schema import Schema, SchemaError
 
-from octo_slample.bank.sample_bank import SampleBank
 from octo_slample.json_pattern_bank import JsonPatternBank
 from octo_slample.pattern.text_pattern import TextPattern
+from octo_slample.sampler.sample_bank import SampleBank
 
 
 @pytest.fixture

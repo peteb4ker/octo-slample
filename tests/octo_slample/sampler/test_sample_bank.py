@@ -2,9 +2,9 @@ from contextlib import nullcontext as does_not_raise
 
 import pytest
 
-from octo_slample.bank.sample_bank import SampleBank
-from octo_slample.channel import Channel
 from octo_slample.constants import DEFAULT_CHANNEL_COUNT
+from octo_slample.sampler.channel import Channel
+from octo_slample.sampler.sample_bank import SampleBank
 
 SAMPLE = "sample"
 
@@ -12,7 +12,7 @@ SAMPLE = "sample"
 @pytest.fixture
 def mock_channel(mocker):
     return mocker.patch(
-        "octo_slample.bank.sample_bank.Channel.sample",
+        "octo_slample.sampler.sample_bank.Channel.sample",
         new_callable=mocker.PropertyMock,
         return_value=SAMPLE,
     )

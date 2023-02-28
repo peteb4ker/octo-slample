@@ -6,8 +6,8 @@ This class is used to load and store a pattern from a JSON file.
 
 from schema import And, Optional, Schema, Use
 
-from octo_slample.bank.sample_bank import SampleBank
 from octo_slample.pattern.text_pattern import PATTERN_HEADER, TextPattern
+from octo_slample.sampler.sample_bank import SampleBank
 
 
 class JsonPatternBank:

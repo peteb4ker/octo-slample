@@ -2,7 +2,7 @@ from contextlib import nullcontext as does_not_raise
 
 import pytest
 
-from octo_slample.channel import Channel
+from octo_slample.sampler.channel import Channel
 
 DEFAULT_CHANNEL = 1
 DEFAULT_SOUND = "default_sample"
@@ -11,7 +11,7 @@ AUDIO_SEGMENT = "AudioSegment"
 
 @pytest.fixture
 def audio_segment_from_wav_mock(mocker):
-    a = mocker.patch("octo_slample.channel.AudioSegment.from_wav")
+    a = mocker.patch("octo_slample.sampler.channel.AudioSegment.from_wav")
     a.return_value = AUDIO_SEGMENT
 
     return a
@@ -19,7 +19,7 @@ def audio_segment_from_wav_mock(mocker):
 
 @pytest.fixture
 def play_mock(mocker):
-    return mocker.patch("octo_slample.channel.play")
+    return mocker.patch("octo_slample.sampler.channel.play")
 
 
 @pytest.fixture
@@ -29,7 +29,6 @@ def channel_fixture(audio_segment_from_wav_mock, play_mock):
 
 def test_channel_init(channel_fixture):
     assert channel_fixture._number == DEFAULT_CHANNEL
-    assert channel_fixture._is_loop is False
     assert channel_fixture._sample == AUDIO_SEGMENT
 
 
