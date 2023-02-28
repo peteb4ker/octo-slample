@@ -22,7 +22,7 @@ def test_json_pattern_bank_init(json_pattern_bank):
 
 def test_json_pattern_bank_schema(json_pattern_bank):
     """Test the JSON pattern bank schema."""
-    schema = json_pattern_bank.schema()
+    schema = json_pattern_bank.schema
     assert schema is not None, "Schema is None"
     assert isinstance(schema, Schema), "Schema is not a Schema object"
 
@@ -31,11 +31,12 @@ def test_json_pattern_bank_schema(json_pattern_bank):
     ("pattern", "exception"),
     [
         ("patterns/pattern_bank.json", does_not_raise()),
+        ("patterns/pattern_bank_no_header.json", does_not_raise()),
         ("patterns/invalid_patterns/no_name.json", pytest.raises(SchemaError)),
         ("patterns/invalid_patterns/no_pattern.json", pytest.raises(SchemaError)),
         ("patterns/invalid_patterns/no_samples.json", pytest.raises(SchemaError)),
     ],
-    ids=["valid", "no_name", "no_pattern", "no_samples"],
+    ids=["valid", "valid_no_header", "no_name", "no_pattern", "no_samples"],
 )
 def test_json_pattern_bank_load(pattern, exception):
     with exception:

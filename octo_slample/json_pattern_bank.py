@@ -22,6 +22,7 @@ class JsonPatternBank:
         pass
 
     @classmethod
+    @property
     def schema(self):
         """Get the schema for the JSON pattern.
 
@@ -72,7 +73,7 @@ class JsonPatternBank:
         """Load the pattern and banks from a JSON pattern.
 
         Validates the JSON pattern against the schema defined by
-        `schema()`, then loads the pattern and bank.
+        `JsonPatternBank.schema`, then loads the pattern and bank.
 
         If the json document does not match the schema, a `SchemaError` is raised.
 
@@ -85,7 +86,7 @@ class JsonPatternBank:
             SchemaError: If the JSON pattern does not match the schema.
         """
         # validate JSON pattern
-        self.schema().validate(json_pattern)
+        self.schema.validate(json_pattern)
 
         # Load pattern list into pattern
         self._pattern = TextPattern()

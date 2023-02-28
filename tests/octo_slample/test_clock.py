@@ -45,7 +45,7 @@ def test_clock_custom_args():
     assert clock._steps_per_second == SECONDS_PER_MINUTE / 120 * 4
 
 
-def test_clock_beat(clock, mock_sleep, mock_time):
+def test_clock_beat_steps_forward_in_time(clock, mock_sleep, mock_time):
     counter = clock.beat()
 
     assert counter == 1
@@ -53,8 +53,18 @@ def test_clock_beat(clock, mock_sleep, mock_time):
     mock_sleep.assert_called_once_with(0.125)
 
 
-def test_clock_beat_reset(clock, mock_sleep, mock_time):
+def test_clock_beat_resets_step_count(clock, mock_sleep, mock_time):
     for idx in range(0, DEFAULT_STEP_COUNT + 1):
         counter = clock.beat()
 
         assert counter == (idx + 1) % DEFAULT_STEP_COUNT
+
+
+def test_clock_beat_returns_counter_when_clock_stopped(clock, mock_sleep, mock_time):
+    clock.stop()
+
+    counter = clock.beat()
+
+    assert counter == 0
+    mock_time.assert_not_called()
+    mock_sleep.assert_not_called()
