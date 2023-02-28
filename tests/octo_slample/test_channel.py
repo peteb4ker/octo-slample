@@ -70,3 +70,11 @@ def test_play(channel_fixture, play_mock, sound, expected):
         play_mock.assert_called_once_with(channel_fixture._sample)
     else:
         play_mock.assert_not_called()
+
+
+def test_get_sample_path(channel_fixture):
+    assert channel_fixture.sample_path == DEFAULT_SOUND
+
+
+def test_str(channel_fixture):
+    assert str(channel_fixture) == f"{DEFAULT_CHANNEL}: {DEFAULT_SOUND}"

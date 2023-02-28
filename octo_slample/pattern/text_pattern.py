@@ -39,8 +39,8 @@ class TextPattern(Pattern):
         assert isinstance(lines, list), "Invalid pattern. Expected a list."
 
         # Make sure there are up to 8 lines.
-        assert (
-            len(lines) <= self.channel_count()
+        assert len(lines) <= len(
+            self
         ), f"Invalid number of lines. Expected 8 lines but got {len(lines)}."
 
         # Make sure each line is 16 characters long.
@@ -86,7 +86,7 @@ class TextPattern(Pattern):
             for idx_j, char in enumerate(line.ljust(DEFAULT_STEP_COUNT, ".")):
                 self._pattern[idx_i][idx_j] = char.lower() == "x"
 
-    def _pattern_to_string(self) -> str:
+    def __str__(self) -> str:
         """Get the pattern as a string.
 
         Returns:
@@ -99,11 +99,3 @@ class TextPattern(Pattern):
             )
 
         return pattern_string
-
-    def __str__(self) -> str:
-        """Get the pattern as a string.
-
-        Returns:
-            The pattern as a string.
-        """
-        return self._pattern_to_string()

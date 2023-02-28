@@ -10,7 +10,7 @@ def pattern_fixture():
 
 
 def test_pattern_init(pattern_fixture):
-    assert pattern_fixture.channel_count() == DEFAULT_CHANNEL_COUNT
+    assert len(pattern_fixture) == DEFAULT_CHANNEL_COUNT
     p = pattern_fixture.pattern
 
     assert len(p) == DEFAULT_CHANNEL_COUNT
@@ -43,12 +43,12 @@ def test_reset_pattern_initializes_empty_pattern(pattern_fixture):
 
 
 def test_channel_count_default(pattern_fixture):
-    assert pattern_fixture.channel_count() == DEFAULT_CHANNEL_COUNT
+    assert len(pattern_fixture) == DEFAULT_CHANNEL_COUNT
 
 
 def test_channel_count_custom(pattern_fixture):
     pattern_fixture.reset_pattern(3)
-    assert pattern_fixture.channel_count() == 3
+    assert len(pattern_fixture) == 3
 
 
 def test_pattern_property_getter(pattern_fixture):

@@ -105,8 +105,8 @@ def test_sample_bank_get_sample(sample_bank, mock_channel, channel_number, excep
         assert result == SAMPLE
 
 
-def test_channel_count(sample_bank):
-    assert sample_bank.channel_count() == DEFAULT_CHANNEL_COUNT
+def test_sample_bank_len(sample_bank):
+    assert len(sample_bank) == DEFAULT_CHANNEL_COUNT
 
 
 @pytest.mark.parametrize(

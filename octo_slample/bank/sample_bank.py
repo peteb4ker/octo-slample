@@ -59,7 +59,7 @@ class SampleBank:
 
         return self._channels[channel - 1].sample
 
-    def channel_count(self):
+    def __len__(self):
         """Return the number of channels.
 
         This is a convenience method for the length of the samples list.
@@ -102,6 +102,14 @@ class SampleBank:
             AssertionError: If the channel number is invalid.
         """
         assert channel > 0, "Channel must be greater than 0"
-        assert (
-            channel <= self.channel_count()
+        assert channel <= len(
+            self
         ), "Channel must be less than or equal to the number of channels"
+
+    def __str__(self):
+        """Return a string representation of the sample bank.
+
+        Returns:
+            str: A string representation of the sample bank.
+        """
+        return "\n".join([str(channel) for channel in self._channels])

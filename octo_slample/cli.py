@@ -65,9 +65,7 @@ def cli():
 
 
 @cli.command()
-@click.option(
-    "--pattern", default="patterns/pattern2.txt", help="Pattern file", type=str
-)
+@click.option("--pattern", help="Pattern file", type=str)
 @click.option("--bpm", default=DEFAULT_BPM, help="Beats per minute", type=int)
 def loop(pattern: str, bpm: int):
     """Run the loop mode.
@@ -77,7 +75,8 @@ def loop(pattern: str, bpm: int):
     try:
         s = LoopingSampler.from_pattern_file(pattern, bpm=bpm)
         click.echo("Playing pattern: \n")
-        click.echo(s._pattern)
+        click.echo(s.pattern)
+        s.clock.start()
         s.loop()
     except SchemaError as e:
         click.echo(f"Invalid pattern file '{pattern}': {e}")
