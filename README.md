@@ -79,11 +79,12 @@ poetry run sampler pads
 poetry run sampler loop --pattern patterns/pattern_bank.json
 ```
 
+### Save samples in the correct format and location
+
 ### Simple UI to play 8 samples
 
 ### Drop samples onto the UI
 
-### Save samples in the correct format and location
 
 ### One shots and loops
 

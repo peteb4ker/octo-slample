@@ -12,19 +12,16 @@ from pydub.playback import play
 class Channel:
     """A class to represent a channel on the OctoSlample."""
 
-    def __init__(self, channel_number: int, sample: str = None, is_loop: bool = False):
+    def __init__(self, channel_number: int, sample: str = None):
         """Initialize the channel.
 
         Args:
             channel_number (int): The channel's name.
             sample (str): The channel's sample.
-            is_loop (bool): Whether the channel plays a looping sample or not.
-                If False, the channel plays a one-shot sample.
         """
         assert isinstance(channel_number, int), "channel_number must be an int"
 
         self._number = channel_number
-        self._is_loop = is_loop
         if sample is not None:
             self.sample = sample
         else:
