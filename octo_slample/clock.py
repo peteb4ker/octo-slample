@@ -16,25 +16,43 @@ class Clock:
     """
 
     def __init__(self, step_count: int = DEFAULT_STEP_COUNT, bpm: int = DEFAULT_BPM):
-        """Initialize the clock.
+        """Initialize the clock with the given step count and beats per minute.
 
-        TODO convert division to BPM
+        The step count determines the number of steps per pattern, while BPM
+        determines the speed of the clock.
+
+        Args:
+            step_count (int, optional): The number of steps per pattern.
+                Defaults to `DEFAULT_STEP_COUNT`.
+            bpm (int, optional): The beats per minute of the clock.
+                Defaults to `DEFAULT_BPM`.
         """
         self._counter = 0
         self._step_count = step_count
         self._bpm = bpm
-        self._division = SECONDS_PER_MINUTE / bpm * self._step_count
+        self._steps_per_second = SECONDS_PER_MINUTE / bpm * self._step_count
 
-    def beat(self):
+    def beat(self) -> None:
         """Go to the next beat of the clock.
+
+        Wait until the next "beat" of the clock and then advance the counter.
+
+        It uses the time.sleep() function to wait for a certain amount of time
+        before advancing the counter. This is done to ensure that the clock is
+        as accurate as possible.
+
+        When the counter reaches the step count, it is reset to 0.
 
         Returns:
             None
         """
         time.sleep(
-            1 / self._division - time.time() * self._division % 1 / self._division
+            1 / self._steps_per_second
+            - time.time() * self._steps_per_second % 1 / self._steps_per_second
         )
 
         self._counter += 1
         if self._counter == self._step_count:
             self._counter = 0
+
+        return self._counter

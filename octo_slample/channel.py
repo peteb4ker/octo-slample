@@ -1,7 +1,7 @@
 """A class to represent a channel on the OctoSlample.
 
-This module contains the Channel class that is used to represent a channel on
-the OctoSlample.
+This module contains the Channel class that is used to represent a
+channel on the OctoSlample.
 """
 
 
