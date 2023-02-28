@@ -212,6 +212,8 @@ def test_export(mock_json_sample_bank, mock_wav_writer):
 
     assert result.exit_code == 0, "octo-slample export should exit with code 0"
     assert "Exporting bank to Squid format..." in result.output
+    assert "- foo.wav" in result.output
+    assert "- bar.wav" in result.output
     assert "Done!" in result.output
 
 

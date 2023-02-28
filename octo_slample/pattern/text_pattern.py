@@ -122,7 +122,6 @@ class TextPattern(Pattern):
         pattern_header = ""
         pattern_length = len(self.pattern[0])
 
-        print(pattern_length)
         for bar in range(0, pattern_length // SIXTEENTHS_PER_BAR):
             for step in range(0, BEATS_PER_BAR):
                 pattern_header += (
