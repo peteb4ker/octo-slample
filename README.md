@@ -10,12 +10,18 @@ brew install pre-commit ffmpeg hadolint
 ```
 
 ```shell
-pre-commit install
+pre-commit install --hook-type commit-msg
 ```
 
 ```shell
 pre-commit run --all-files
 ```
+
+## Repository conventions
+
+### Commit messages
+
+This repository uses the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) commit message format.  Formatting is checked upon commit.
 
 ## CI/CD
 
