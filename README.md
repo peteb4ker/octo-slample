@@ -70,7 +70,7 @@ poetry run sampler pads
 ### Play samples in a loop, with pattern defined in a txt file
 
 ```shell
-poetry run sampler loop
+poetry run sampler loop --pattern tests/pattern.txt
 ```
 
 ### Simple UI to play 8 samples
