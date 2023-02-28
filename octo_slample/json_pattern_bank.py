@@ -32,6 +32,7 @@ class JsonPatternBank:
                 "name": "pattern name",
                 "description": "pattern description",
                 "pattern": [
+                    "1234123412341234",
                     "x   x   x   x   ",
                     "  x   x   x   x ",
                     ...
@@ -44,6 +45,8 @@ class JsonPatternBank:
                     ...
                 ]
             }
+
+        Note that the header row, `"1234123412341234"`, is optional.
 
         See Also:
             https://github.com/keleshev/schema
@@ -68,6 +71,13 @@ class JsonPatternBank:
     def load(self, json_pattern: dict):
         """Load the pattern and banks from a JSON pattern.
 
+        Validates the JSON pattern against the schema defined by
+        `schema()`, then loads the pattern and bank.
+
+        If the json document does not match the schema, a `SchemaError` is raised.
+
+        If the pattern has a header, it is removed.
+
         Args:
             json_pattern (dict): The JSON pattern.
 
@@ -77,16 +87,16 @@ class JsonPatternBank:
         # validate JSON pattern
         self.schema().validate(json_pattern)
 
-        # TODO load pattern list into pattern
+        # Load pattern list into pattern
         self._pattern = TextPattern()
         if json_pattern["pattern"][0] == PATTERN_HEADER:
             json_pattern["pattern"].pop(0)
 
-        self._pattern.pattern(json_pattern["pattern"])
+        self._pattern.pattern = json_pattern["pattern"]
 
         # load samples into channels
         self._bank = SampleBank(len(json_pattern["samples"]))
-        self._bank.set_samples([x["sample"] for x in json_pattern["samples"]])
+        self._bank.samples = [x["sample"] for x in json_pattern["samples"]]
 
     @classmethod
     def from_file(cls, filename: str):

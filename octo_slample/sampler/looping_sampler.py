@@ -8,8 +8,8 @@ from octo_slample.constants import (
     DEFAULT_CHANNEL_COUNT,
     DEFAULT_STEP_COUNT,
 )
+from octo_slample.json_pattern_bank import JsonPatternBank
 from octo_slample.pattern import Pattern
-from octo_slample.pattern.json_pattern_bank import JsonPatternBank
 from octo_slample.sampler.sampler import Sampler
 
 
