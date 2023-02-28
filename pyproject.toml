@@ -23,6 +23,46 @@ docformatter = "^1.5.1"
 black = "^23.1.0"
 flake8-pyproject = "^1.2.2"
 pre-commit = "^3.0.3"
+sphinx-rtd-theme = "^1.1.1"
+myst-parser = "^0.18.1"
+sphinx-click = "^4.4.0"
+flake8-docstrings = "^1.7.0"
+sphinx-autoapi = "^2.0.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+sampler = "octo_slample.cli:cli"
+
+[tool.black]
+line-length = 88
+
+[tool.flake8]
+max-line-length = 88
+per-file-ignores = [
+    "tests/*:D"
+]
+
+[tool.pytest.ini_options]
+addopts = "--cov=octo_slample --cov-report html"
+
+
+[tool.coverage.run]
+branch = true
+source = ["octo_slample", "tests"]
+omit = [
+    "**/__init__.py"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "def __repr__",
+  "def __str__",
+  "raise AssertionError",
+  "raise NotImplementedError",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+  "if typing.TYPE_CHECKING:"
+]

@@ -1,2 +1,5 @@
 wavs/
-*/__pycache__/
+**/__pycache__/
+_build/
+dist/
+.coverage

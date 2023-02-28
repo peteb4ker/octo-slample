@@ -1,3 +1,7 @@
+"""8-channel virtual sampler.
+
+This module contains the Sampler class.
+"""
 from __future__ import annotations
 
 import threading
@@ -11,6 +15,10 @@ class Sampler:
     """8-channel virtual sampler."""
 
     def __init__(self):
+        """Initialize the sampler.
+
+        Creates 8 channels.
+        """
         self.channels = []
 
         for x in range(1, CHANNEL_COUNT + 1):
@@ -19,7 +27,8 @@ class Sampler:
     def set_sound(self, channel: int, sound: str):
         """Set a channel's sound.
 
-        Channels are 1-indexed."""
+        Channels are 1-indexed.
+        """
         assert channel > 0
         assert channel <= CHANNEL_COUNT
 
@@ -30,7 +39,8 @@ class Sampler:
 
         This method is non-blocking.
 
-        Channels are 1-indexed."""
+        Channels are 1-indexed.
+        """
         assert channel > 0
         assert channel <= CHANNEL_COUNT
 
