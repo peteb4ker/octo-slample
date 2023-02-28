@@ -166,10 +166,23 @@ def export(bank: str, bank_number: int, output: str) -> None:
     required=False,
     type=bool,
 )
-def init(directory: Path, force: bool = False) -> None:
+@click.option(
+    "--recursive",
+    "-r",
+    is_flag=True,
+    help="If true, initialize all subdirectories",
+    required=False,
+    type=bool,
+)
+def init(directory: Path, force: bool = False, recursive: bool = False) -> None:
     """Initialize a sample directory."""
     try:
-        BankInitializer.init(directory, force)
+        if recursive:
+            click.echo(f"Initializing sample directory '{directory}' recursively")
+            BankInitializer.init_recursive(directory, force)
+        else:
+            BankInitializer.init(directory, force)
+
         click.echo(f"Initialized sample directory '{directory}'")
         click.echo(
             "Bank file can be found at 'bank.json' for name and description updates."

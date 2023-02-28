@@ -63,6 +63,14 @@ def mock_bank_initializer(mocker):
     return m
 
 
+@pytest.fixture
+def mock_bank_init_recursive(mocker):
+    m = mocker.patch("octo_slample.cli.BankInitializer.init_recursive")
+    m.return_value.initialize.return_value = "foo.json"
+
+    return m
+
+
 def test_octo_slample_help():
     runner = CliRunner()
     result = runner.invoke(cli.octo_slample)
@@ -295,3 +303,11 @@ def test_init_os_error(mock_bank_initializer, tmp_path):
         "Error: Skipping as a FileNotFoundError occurred while initializing"
         in result.output
     )
+
+
+def test_init_recursive(mock_bank_init_recursive, tmp_path):
+    runner = CliRunner()
+    result = runner.invoke(cli.octo_slample, ["init", str(tmp_path), "--recursive"])
+
+    assert result.exit_code == 0
+    mock_bank_init_recursive.assert_called_once_with(str(tmp_path), False)

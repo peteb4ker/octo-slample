@@ -20,6 +20,22 @@ def directory_to_init(tmp_path):
     return tmp_path
 
 
+@pytest.fixture
+def directory_with_subdirectories(tmp_path):
+    (tmp_path / "subdirectory1").mkdir()
+    (tmp_path / "subdirectory2").mkdir()
+    (tmp_path / "subdirectory1" / "sample.wav").touch()
+    (tmp_path / "subdirectory2" / "sample.wav").touch()
+
+    return tmp_path
+
+
+@pytest.fixture
+def mock_json_dump(mocker):
+    """Fixture for mocking json.dump."""
+    return mocker.patch("octo_slample.bank_initializer.json.dump")
+
+
 def test_bank_initializer_constructor(directory_to_init):
     """Test the BankInitializer initializer."""
     initializer = BankInitializer(directory_to_init)
@@ -32,25 +48,46 @@ def test_bank_initializer_bad_directory(directory_to_init):
         BankInitializer(directory_to_init / "bad_directory")
 
 
-def test_bank_initializer_run(directory_to_init):
+def test_run(directory_to_init):
     """Test the BankInitializer run method."""
     initializer = BankInitializer(directory_to_init)
     initializer.run()
 
 
-def test_bank_initializer_run_existing_bank(existing_bank):
+def test_run_with_existing_bank(existing_bank):
     """Test the BankInitializer run method with an existing bank file."""
     initializer = BankInitializer(existing_bank)
     with pytest.raises(BankExistsError):
         initializer.run()
 
 
-def test_bank_initializer_run_no_wav_files(tmp_path):
+def test_run_ignoring_existing_bank_file(existing_bank, mock_json_dump):
+    """Test the BankInitializer run method with an existing bank file."""
+    initializer = BankInitializer(existing_bank, ignore_existing_bank_file=True)
+
+    initializer.run()
+
+    mock_json_dump.assert_not_called()
+
+
+def test_run_with_no_wav_files(tmp_path):
     """Test the BankInitializer run method with no WAV files."""
 
     initializer = BankInitializer(tmp_path)
     with pytest.raises(FileNotFoundError):
         initializer.run()
+
+
+def test_run_recursively(directory_with_subdirectories):
+    """Test the BankInitializer run method with an existing bank file and
+    force."""
+    initializer = BankInitializer(directory_with_subdirectories, recursive=True)
+    initializer.run()
+
+    print(list((directory_with_subdirectories / "subdirectory1").iterdir()))
+
+    assert (directory_with_subdirectories / "subdirectory1" / "bank.json").exists()
+    assert (directory_with_subdirectories / "subdirectory2" / "bank.json").exists()
 
 
 def test_bank_initializer_to_bank_dict(directory_to_init):
@@ -87,3 +124,40 @@ def test_bank_initializer_init(directory_to_init):
 
     assert isinstance(initializer, BankInitializer)
     assert initializer.directory == directory_to_init
+
+
+def test_collect_subdirectories_no_subdirectories(directory_to_init):
+    """Test the BankInitializer collect_subdirectories method with no
+    subdirectories."""
+    initializer = BankInitializer(directory_to_init)
+
+    assert initializer._collect_subdirectories(directory_to_init) == []
+
+
+def test_collect_subdirectories_with_subdirectories_and_no_wavs(directory_to_init):
+    """Test the BankInitializer collect_subdirectories method with
+    subdirectories."""
+    (directory_to_init / "subdirectory1").mkdir()
+    (directory_to_init / "subdirectory2").mkdir()
+
+    initializer = BankInitializer(directory_to_init)
+
+    assert initializer._collect_subdirectories(directory_to_init) == []
+
+
+def test_collect_subdirectories_with_subdirectories(directory_with_subdirectories):
+    initializer = BankInitializer(directory_with_subdirectories)
+
+    assert initializer._collect_subdirectories(directory_with_subdirectories) == [
+        directory_with_subdirectories / "subdirectory1",
+        directory_with_subdirectories / "subdirectory2",
+    ]
+
+
+def test_init_recursive(directory_with_subdirectories):
+    """Test the BankInitializer run method with an existing bank file and
+    force."""
+    BankInitializer.init_recursive(directory_with_subdirectories)
+
+    assert (directory_with_subdirectories / "subdirectory1" / "bank.json").exists()
+    assert (directory_with_subdirectories / "subdirectory2" / "bank.json").exists()
