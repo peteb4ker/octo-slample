@@ -84,8 +84,6 @@ def test_run_recursively(directory_with_subdirectories):
     initializer = BankInitializer(directory_with_subdirectories, recursive=True)
     initializer.run()
 
-    print(list((directory_with_subdirectories / "subdirectory1").iterdir()))
-
     assert (directory_with_subdirectories / "subdirectory1" / "bank.json").exists()
     assert (directory_with_subdirectories / "subdirectory2" / "bank.json").exists()
 
@@ -124,34 +122,6 @@ def test_bank_initializer_init(directory_to_init):
 
     assert isinstance(initializer, BankInitializer)
     assert initializer.directory == directory_to_init
-
-
-def test_collect_subdirectories_no_subdirectories(directory_to_init):
-    """Test the BankInitializer collect_subdirectories method with no
-    subdirectories."""
-    initializer = BankInitializer(directory_to_init)
-
-    assert initializer._collect_subdirectories(directory_to_init) == []
-
-
-def test_collect_subdirectories_with_subdirectories_and_no_wavs(directory_to_init):
-    """Test the BankInitializer collect_subdirectories method with
-    subdirectories."""
-    (directory_to_init / "subdirectory1").mkdir()
-    (directory_to_init / "subdirectory2").mkdir()
-
-    initializer = BankInitializer(directory_to_init)
-
-    assert initializer._collect_subdirectories(directory_to_init) == []
-
-
-def test_collect_subdirectories_with_subdirectories(directory_with_subdirectories):
-    initializer = BankInitializer(directory_with_subdirectories)
-
-    assert initializer._collect_subdirectories(directory_with_subdirectories) == [
-        directory_with_subdirectories / "subdirectory1",
-        directory_with_subdirectories / "subdirectory2",
-    ]
 
 
 def test_init_recursive(directory_with_subdirectories):

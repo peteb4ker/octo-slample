@@ -54,14 +54,14 @@ class BankInitializer(DirectoryMixin):
                 not forcing.
             FileNotFoundError: If there are no WAV files in the directory.
         """
-        if self._recursive and self._collect_subdirectories(self.directory) != []:
+        if self._recursive and self.collect_subdirectories(self.directory) != []:
             self.recursively_run()
         else:
             self.write_bank_file()
 
     def recursively_run(self) -> None:
         """Recursively run the initializer on subdirectories, if they exist."""
-        for subdirectory in self._collect_subdirectories(self.directory):
+        for subdirectory in self.collect_subdirectories(self.directory):
             BankInitializer.init(
                 subdirectory,
                 self._force,

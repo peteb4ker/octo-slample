@@ -22,6 +22,7 @@ from pathlib import Path
 
 import soundfile as sf
 
+from octo_slample.directory import DirectoryMixin
 from octo_slample.sampler.channel import Channel
 from octo_slample.sampler.sample_bank import SampleBank
 
@@ -31,7 +32,7 @@ SQUID_SALMPLE_WAV_SUBTYPE = "PCM_16"
 FFMPEG_EXPORT_PARAMS = ["-ac", "1", "-ar", "44100", "-b:a", "16"]
 
 
-class WavWriter:
+class WavWriter(DirectoryMixin):
     """Export banks and samples to the ALM Squid Salmple format.
 
     This class contains class methods that can be used to export banks
@@ -72,16 +73,6 @@ class WavWriter:
         return str(Path(set_output_path, f"Bank {bank_number}"))
 
     @classmethod
-    def _create_path_if_not_exists(cls, path: str) -> None:
-        """Create the path if it does not exist.
-
-        Args:
-            path (str): The path to create.
-        """
-        if not Path(path).exists():
-            Path(path).mkdir(parents=True, exist_ok=True)
-
-    @classmethod
     def write_channel(
         cls, channel: Channel, bank_output_path: str | Path
     ) -> str | ValueError:
@@ -109,7 +100,7 @@ class WavWriter:
             return ValueError(f"Channel {channel} has no sample to export")
 
         full_path = cls.build_sample_output_path(bank_output_path, channel.number)
-        cls._create_path_if_not_exists(full_path)
+        cls.create_directory(bank_output_path)
 
         sf.write(
             full_path,
@@ -145,44 +136,11 @@ class WavWriter:
         ), "set_output_path must be a string or Path"
 
         bank_output_path = cls.build_bank_output_path(set_output_path, bank_number)
-        cls._create_path_if_not_exists(bank_output_path)
+
+        cls.create_directory(bank_output_path)
 
         output_paths = [
             cls.write_channel(channel, bank_output_path) for channel in bank._channels
-        ]
-
-        return output_paths
-
-    @classmethod
-    def write_set(
-        cls, banks: list[SampleBank], set_output_path: str | Path
-    ) -> list[list[str | ValueError]]:
-        """Export a Set of banks to the ALM Squid Salmple format.
-
-        As the set is represented as a list, its assumed that the first
-        element (index 0) is `Bank 1`, the second element (index 1) is
-        `Bank 2`, etc.
-
-        Each of the banks are written out to a separate directory, with
-        the directory name being `Bank 1`, `Bank 2`, etc.
-
-        Args:
-            banks (list[SampleBank]): The set of sample banks to export.
-            set_output_path (str|Path): The output path to write set of banks to.
-
-        Returns:
-            list[list[str]]: A list of lists of paths of the exported files.
-        """
-        assert isinstance(banks, list), f"banks must be a list. but got a {type(banks)}"
-        assert isinstance(
-            set_output_path, (str, Path)
-        ), "set_output_path must be a string or Path"
-
-        output_paths = [
-            cls.write_bank(
-                bank=bank, bank_number=idx + 1, set_output_path=set_output_path
-            )
-            for idx, bank in enumerate(banks)
         ]
 
         return output_paths

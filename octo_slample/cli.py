@@ -11,6 +11,7 @@ import click
 from click import ClickException
 from schema import SchemaError
 
+from octo_slample.bank_exporter import BankExporter
 from octo_slample.bank_initializer import BankInitializer
 from octo_slample.constants import DEFAULT_BPM
 from octo_slample.exception import BankExistsError
@@ -18,7 +19,6 @@ from octo_slample.pattern.json_pattern import JsonPattern
 from octo_slample.sampler.json_sample_bank import JsonSampleBank
 from octo_slample.sampler.looping_sampler import LoopingSampler
 from octo_slample.sampler.sampler import Sampler
-from octo_slample.wav_writer import WavWriter
 
 
 def read_valid_channel() -> Union[int, None]:
@@ -142,9 +142,7 @@ def export(bank: str, bank_number: int, output: str) -> None:
     try:
         click.echo("Exporting bank to Squid format...")
 
-        paths = WavWriter.write_bank(
-            JsonSampleBank.from_file(bank), bank_number, output
-        )
+        paths = BankExporter.export_bank(bank, bank_number, output)
 
         click.echo("Exported:")
         for path in paths:
@@ -154,6 +152,36 @@ def export(bank: str, bank_number: int, output: str) -> None:
     except Exception as e:
         traceback.print_exception(e)
         raise ClickException(f"Invalid bank file '{bank}': {e}")
+
+
+@octo_slample.command()
+@click.argument("input_directory", type=click.Path(exists=True))
+@click.argument("output_directory", type=click.Path(exists=False))
+def export_set(input_directory: Path, output_directory: Path) -> None:
+    """Export a set of banks to a Squid formatted Set.
+
+    Usage:
+        octo-slample export-set <input_directory> <output_directory>
+
+    Args:
+        input_directory (Path): The input directory. Must exist.
+        output_directory (Path): The output directory. Does not need to exist.
+
+    Raises:
+        ClickException: If an error occurred.
+    """
+    try:
+        click.echo(f"- Creating '{output_directory}' if it doesn't exist")
+        BankExporter.create_directory(output_directory)
+
+        click.echo(f"- Exporting banks in '{input_directory}' to '{output_directory}'")
+        paths = BankExporter.export_set(input_directory, output_directory)
+
+        for path in paths:
+            click.echo(f" - {path}")
+    except Exception as e:
+        traceback.print_exception(e)
+        raise ClickException(f"Export error: {e}")
 
 
 @octo_slample.command()

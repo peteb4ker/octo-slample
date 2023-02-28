@@ -71,6 +71,27 @@ def mock_bank_init_recursive(mocker):
     return m
 
 
+@pytest.fixture
+def mock_bank_exporter_export_bank(mocker):
+    m = mocker.patch("octo_slample.cli.BankExporter.export_bank")
+    m.return_value = ["foo.wav", "bar.wav"]
+
+    return m
+
+
+@pytest.fixture
+def mock_bank_exporter_export_set(mocker):
+    m = mocker.patch("octo_slample.cli.BankExporter.export_set")
+    m.return_value = ["foo.wav", "bar.wav"]
+
+    return m
+
+
+@pytest.fixture
+def mock_bank_exporter_create_directory(mocker):
+    return mocker.patch("octo_slample.cli.BankExporter.create_directory")
+
+
 def test_octo_slample_help():
     runner = CliRunner()
     result = runner.invoke(cli.octo_slample)
@@ -80,9 +101,12 @@ def test_octo_slample_help():
     assert "  Octo Slample command line interface." in result.output
     assert "  --help  Show this message and exit." in result.output
     assert "Commands:" in result.output
-    assert "  export  Export a bank to a set of wav files." in result.output
-    assert "  loop    Run the loop mode." in result.output
-    assert "  pads    Run the pads mode." in result.output
+    assert "  export      Export a bank to a set of wav files." in result.output
+    assert (
+        "  export-set  Export a set of banks to a Squid formatted Set." in result.output
+    )
+    assert "  loop        Run the loop mode." in result.output
+    assert "  pads        Run the pads mode." in result.output
 
 
 def test_loop_help():
@@ -209,7 +233,7 @@ def test_export_help():
     assert "  -o, --output TEXT          Output path  [required]" in result.output
 
 
-def test_export(mock_json_sample_bank, mock_wav_writer):
+def test_export(mock_bank_exporter_export_bank):
     runner = CliRunner()
     result = runner.invoke(
         cli.octo_slample,
@@ -224,8 +248,9 @@ def test_export(mock_json_sample_bank, mock_wav_writer):
         ],
     )
 
-    mock_wav_writer.assert_called_once()
-    mock_json_sample_bank.assert_called_once()
+    mock_bank_exporter_export_bank.assert_called_once_with(
+        "banks/sample_bank.json", 1, "exported_samples"
+    )
 
     assert result.exit_code == 0, "octo-slample export should exit with code 0"
     assert "Exporting bank to Squid format..." in result.output
@@ -234,10 +259,10 @@ def test_export(mock_json_sample_bank, mock_wav_writer):
     assert "Done!" in result.output
 
 
-def test_export_handles_unknown_error(mock_json_sample_bank, mock_wav_writer):
+def test_export_handles_unknown_error(mock_bank_exporter_export_bank):
     runner = CliRunner()
 
-    mock_wav_writer.side_effect = Exception("Unknown Error")
+    mock_bank_exporter_export_bank.side_effect = Exception("Unknown Error")
 
     result = runner.invoke(
         cli.octo_slample,
@@ -311,3 +336,58 @@ def test_init_recursive(mock_bank_init_recursive, tmp_path):
 
     assert result.exit_code == 0
     mock_bank_init_recursive.assert_called_once_with(str(tmp_path), False)
+
+
+def test_export_set_help():
+    runner = CliRunner()
+    result = runner.invoke(cli.octo_slample, ["export-set", "--help"])
+
+    assert result.exit_code == 0
+    assert "Usage: octo-slample export-set [OPTIONS]" in result.output
+    assert "  Export a set of banks to a Squid formatted Set." in result.output
+    assert "input_directory" in result.output
+    assert "output_directory" in result.output
+
+
+def test_export_set(
+    tmp_path, mock_bank_exporter_export_set, mock_bank_exporter_create_directory
+):
+    (tmp_path / "banks").mkdir()
+
+    runner = CliRunner()
+    result = runner.invoke(
+        cli.octo_slample,
+        [
+            "export-set",
+            str(tmp_path / "banks"),
+            str(tmp_path / "exported_samples"),
+        ],
+    )
+
+    mock_bank_exporter_create_directory.assert_called_once_with(
+        str(tmp_path / "exported_samples")
+    )
+
+    mock_bank_exporter_export_set.assert_called_once_with(
+        str(tmp_path / "banks"), str(tmp_path / "exported_samples")
+    )
+
+    assert result.exit_code == 0, "octo-slample export-set should exit with code 0"
+
+
+def test_export_set_handles_unknown_error(mock_bank_exporter_export_set):
+    runner = CliRunner()
+
+    mock_bank_exporter_export_set.side_effect = Exception("Unknown Error")
+
+    result = runner.invoke(
+        cli.octo_slample,
+        [
+            "export-set",
+            "banks",
+            "exported_samples",
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert "Unknown Error" in result.output

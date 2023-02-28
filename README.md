@@ -183,6 +183,16 @@ or `-o` command-line flag.
 poetry run octo-slample export -b banks/sample_bank.json -n 1 -o "tmp/Set 1"
 ```
 
+### Recursively save a directory of sample banks to a Set
+
+To create a Set from multiple sample bank directories, use the `export-set` command:
+
+```shell
+poetry run octo-slample export-set ~/samples ~/tmp/Set\ 1
+```
+
+This command will create a folder that can be copied onto the Squid USB drive.
+
 ### Set the volume on a channel for loop playback
 
 Loop playback volume can be set, per channel, within `pattern.json` files.

@@ -38,7 +38,10 @@ class DirectoryMixin(metaclass=ABCMeta):
 
         self._directory = directory
 
-    def _collect_subdirectories(self, directory: Path) -> None:
+    @classmethod
+    def collect_subdirectories(
+        self, directory: Path, with_file_suffix: str = ".wav"
+    ) -> None:
         """Collect all subdirectories with WAV files.
 
         For the given `directory`, collect all subdirectories that contain
@@ -47,11 +50,12 @@ class DirectoryMixin(metaclass=ABCMeta):
 
         Args:
             directory (Path): The directory to collect subdirectories from.
+            with_file_suffix (str): The file suffix to look for.
 
         Returns:
             list: The list of subdirectories.
         """
-        assert isinstance(directory, Path), "Directory must be a Path."
+        directory = Path(directory)
         assert directory.is_dir(), "Directory must be a directory."
 
         return [
@@ -59,7 +63,17 @@ class DirectoryMixin(metaclass=ABCMeta):
             for subdirectory in directory.iterdir()
             if subdirectory.is_dir()
             and any(
-                (file.suffix == ".wav" or file.is_dir())
+                (file.suffix == with_file_suffix or file.is_dir())
                 for file in subdirectory.iterdir()
             )
         ]
+
+    @classmethod
+    def create_directory(cls, path: Union[str, Path]) -> None:
+        """Create the directory `path` if it does not exist.
+
+        Args:
+            path (str, Path): The path to create.
+        """
+        if not Path(path).exists():
+            Path(path).mkdir(parents=True, exist_ok=True)
