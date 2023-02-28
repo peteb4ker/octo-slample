@@ -84,8 +84,8 @@ class LoopingSampler(Sampler):
         """
         assert self._pattern, "pattern must be set before playing"
 
-        for step in range(1, DEFAULT_STEP_COUNT + 1):
-            for channel in range(1, len(self) + 1):
+        for step in range(0, DEFAULT_STEP_COUNT):
+            for channel in range(0, len(self)):
                 if self.pattern.is_step_set(channel, step):
                     self.play_channel(channel)
 

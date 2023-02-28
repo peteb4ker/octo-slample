@@ -31,7 +31,7 @@ def test_reset_negative_channel_count_fails(pattern_fixture):
 
 
 def test_reset_initializes_empty_pattern(pattern_fixture):
-    pattern_fixture._pattern[1][1] = True
+    pattern_fixture._pattern[0][0] = True
     pattern_fixture.reset()
     p = pattern_fixture.pattern
 
@@ -59,7 +59,7 @@ def test_pattern_property_getter(pattern_fixture):
 
 def test_is_step_set(pattern_fixture):
     pattern_fixture._pattern[0][0] = True
-    assert pattern_fixture.is_step_set(1, 1) is True
+    assert pattern_fixture.is_step_set(0, 0) is True
 
 
 def test_is_step_set_negative_channel_fails(pattern_fixture):
@@ -68,4 +68,4 @@ def test_is_step_set_negative_channel_fails(pattern_fixture):
 
 
 def test__getitem__(pattern_fixture):
-    assert pattern_fixture[1] == pattern_fixture._pattern[0]
+    assert pattern_fixture[0] == pattern_fixture._pattern[0]

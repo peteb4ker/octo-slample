@@ -4,7 +4,7 @@ import pytest
 
 from octo_slample.sampler.channel import Channel
 
-DEFAULT_CHANNEL = 1
+DEFAULT_CHANNEL = 0
 DEFAULT_SOUND = "default_sample"
 AUDIO_SEGMENT = "AudioSegment"
 

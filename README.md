@@ -119,15 +119,20 @@ In addition to creating `wav` sample banks, the name of the bank can be added to
 named `info.txt`, stored in the `Bank {n}` folder alongside the `wav` samples.  This
 name is taken from the `name` attribute in the bank `json` definition.
 
-Creating sample banks
+#### Creating sample banks
 
-When creating sample banks, the output directory is provided by the `--output-directory`
+When creating sample banks, the output directory is provided by the `--output`
 or `-o` command-line flag.
+
+#### To save a bank in Squid Salmple format
+
+```shell
+poetry run octo-slample export -p patterns/pattern_bank.json -b 1 -o "tmp/Set 1"
+```
 
 ### Simple UI to play 8 samples
 
 ### Drop samples onto the UI
-
 
 ### One shots and loops
 

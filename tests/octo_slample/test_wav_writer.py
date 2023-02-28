@@ -11,7 +11,7 @@ from octo_slample.wav_writer import WavWriter
 def mock_channel(mocker):
     m = mocker.MagicMock(spec=Channel)
 
-    type(m).number = mocker.PropertyMock(side_effect=[1, 2, 3])
+    type(m).number = mocker.PropertyMock(side_effect=[0, 1, 2])
 
     return m
 
@@ -26,11 +26,12 @@ def mock_channel_sample_is_none(mock_channel):
 def mock_sample_bank(mocker, mock_channel):
     m = mocker.MagicMock(spec=SampleBank)
     m.__getitem__.side_effect = [mock_channel, mock_channel, mock_channel]
+    m._channels = [mock_channel, mock_channel, mock_channel]
     return m
 
 
 @pytest.fixture
-def sample_banks(mocker, mock_sample_bank):
+def sample_banks(mock_sample_bank):
     return [
         mock_sample_bank,
         mock_sample_bank,
@@ -67,7 +68,7 @@ def test_build_sample_output_path(tmp_path):
         bank_output_path=str(tmp_path), channel_number=5
     )
 
-    assert result == str(tmp_path / "chan-005.wav")
+    assert result == str(tmp_path / "chan-006.wav")
 
 
 def test_build_bank_output_path(tmp_path):

@@ -47,11 +47,12 @@ def test_sampler_bank_set(sampler):
 @pytest.mark.parametrize(
     "channel,exception",
     [
-        (0, pytest.raises(AssertionError)),
-        (DEFAULT_CHANNEL_COUNT + 1, pytest.raises(AssertionError)),
+        (-1, pytest.raises(AssertionError)),
+        (DEFAULT_CHANNEL_COUNT, pytest.raises(AssertionError)),
         (None, pytest.raises(AssertionError)),
-        (1, does_not_raise()),
+        (0, does_not_raise()),
     ],
+    ids=["negative", "too high", "none", "valid"],
 )
 def test_play_channel(
     sampler, mock_threading_thread, mock_bank___getitem__, channel, exception

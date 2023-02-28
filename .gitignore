@@ -3,3 +3,4 @@ wavs/
 _build/
 dist/
 .coverage
+tmp/

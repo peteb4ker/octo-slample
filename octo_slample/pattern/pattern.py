@@ -29,7 +29,7 @@ class Pattern:
         Raises:
             AssertionError: If the channel count is invalid.
         """
-        self.__validate_channel_number(channel_count)
+        self.__validate_channel_number(channel_count - 1)
 
         self._pattern = [[False] * DEFAULT_STEP_COUNT for _ in range(0, channel_count)]
 
@@ -44,15 +44,17 @@ class Pattern:
     def __getitem__(self, channel: int) -> list:
         """Get the pattern for the given channel.
 
+        Channels are 0-indexed.
+
         Args:
-            channel: The channel. 1-8.
+            channel: The channel. 0-7.
 
         Returns:
             The pattern for the given channel.
         """
         self.__validate_channel_number(channel)
 
-        return self._pattern[channel - 1]
+        return self._pattern[channel]
 
     @property
     def pattern(self):
@@ -70,12 +72,16 @@ class Pattern:
     def is_step_set(self, channel: int, step: int) -> bool:
         """Get the step for the given channel.
 
+        Channels are 0-indexed.
+
+        Steps are 0-indexed.
+
         Returns True if the channel should be played on the step, False
         otherwise.
 
         Args:
-            channel: The channel. 1-8.
-            step: The step. 1-16.
+            channel: The channel. 0-7.
+            step: The step. 0-15.
 
         Returns:
             True if the channel should be played on the step, False otherwise.
@@ -83,10 +89,10 @@ class Pattern:
         self.__validate_channel_number(channel)
 
         assert (
-            1 <= step <= DEFAULT_STEP_COUNT
-        ), f"Invalid step. Expected 1-{DEFAULT_STEP_COUNT} but got {step}."
+            0 <= step < DEFAULT_STEP_COUNT
+        ), f"Invalid step. Expected 0-{DEFAULT_STEP_COUNT-1} but got {step}."
 
-        return self._pattern[channel - 1][step - 1]
+        return self._pattern[channel][step]
 
     def __validate_channel_number(self, channel: int):
         """Validate the channel number.
@@ -100,7 +106,7 @@ class Pattern:
         assert isinstance(channel, int), (
             "Invalid channel number. Expected an integer but got " + f"{type(channel)}."
         )
-        assert 1 <= channel <= DEFAULT_CHANNEL_COUNT, (
-            f"Invalid channel. Expected 1-{DEFAULT_CHANNEL_COUNT} "
+        assert 0 <= channel < DEFAULT_CHANNEL_COUNT, (
+            f"Invalid channel. Expected 0-{DEFAULT_CHANNEL_COUNT-1} "
             + f"but got {channel}."
         )

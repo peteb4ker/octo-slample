@@ -16,7 +16,8 @@ class Channel:
         """Initialize the channel.
 
         Args:
-            channel_number (int): The channel's name.
+            channel_number (int): The channel number.
+                Zero-indexed.
             sample (str): The channel's sample.
         """
         assert isinstance(channel_number, int), "channel_number must be an int"
