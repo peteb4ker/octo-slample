@@ -3,6 +3,7 @@ from click.testing import CliRunner
 from schema import SchemaError
 
 import octo_slample.cli as cli
+from octo_slample.exception import BankExistsError
 
 
 @pytest.fixture
@@ -50,6 +51,14 @@ def mock_play_channel(mocker):
 def mock_wav_writer(mocker):
     m = mocker.patch("octo_slample.cli.WavWriter.write_bank")
     m.return_value = ["foo.wav", "bar.wav"]
+
+    return m
+
+
+@pytest.fixture
+def mock_bank_initializer(mocker):
+    m = mocker.patch("octo_slample.cli.BankInitializer.init")
+    m.return_value.initialize.return_value = "foo.json"
 
     return m
 
@@ -237,3 +246,52 @@ def test_export_handles_unknown_error(mock_json_sample_bank, mock_wav_writer):
 
     assert result.exit_code == 1
     assert "Unknown Error" in result.output
+
+
+def test_init_no_directory():
+    runner = CliRunner()
+    result = runner.invoke(cli.octo_slample, ["init"])
+
+    assert result.exit_code == 2
+    assert "Error: Missing argument 'DIRECTORY'." in result.output
+
+
+def test_init_on_valid_directory(mock_bank_initializer, tmp_path):
+    runner = CliRunner()
+    result = runner.invoke(cli.octo_slample, ["init", str(tmp_path)])
+
+    assert result.exit_code == 0
+    mock_bank_initializer.assert_called_once_with(str(tmp_path), False)
+
+
+def test_init_with_force(mock_bank_initializer, tmp_path):
+    runner = CliRunner()
+    result = runner.invoke(cli.octo_slample, ["init", str(tmp_path), "--force"])
+
+    assert result.exit_code == 0
+    mock_bank_initializer.assert_called_once_with(str(tmp_path), True)
+
+
+def test_init_bank_exists(mock_bank_initializer, tmp_path):
+    runner = CliRunner()
+    mock_bank_initializer.side_effect = BankExistsError(tmp_path)
+
+    result = runner.invoke(cli.octo_slample, ["init", str(tmp_path)])
+
+    assert result.exit_code == 1
+    assert "Skipping as bank.json already exists" in result.output
+
+
+def test_init_os_error(mock_bank_initializer, tmp_path):
+    """Test that we handle an OSError gracefully, such as when the directory
+    doesn't exist or the given directory is a file."""
+    runner = CliRunner()
+    mock_bank_initializer.side_effect = FileNotFoundError()
+
+    result = runner.invoke(cli.octo_slample, ["init", str(tmp_path)])
+
+    assert result.exit_code == 1
+    assert (
+        "Error: Skipping as a FileNotFoundError occurred while initializing"
+        in result.output
+    )

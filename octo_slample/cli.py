@@ -4,13 +4,16 @@ Octo Slample is a sampler that can play 8 channels at once.
 """
 
 import traceback
+from pathlib import Path
 from typing import Union
 
 import click
 from click import ClickException
 from schema import SchemaError
 
+from octo_slample.bank_initializer import BankInitializer
 from octo_slample.constants import DEFAULT_BPM
+from octo_slample.exception import BankExistsError
 from octo_slample.pattern.json_pattern import JsonPattern
 from octo_slample.sampler.json_sample_bank import JsonSampleBank
 from octo_slample.sampler.looping_sampler import LoopingSampler
@@ -151,6 +154,33 @@ def export(bank: str, bank_number: int, output: str) -> None:
     except Exception as e:
         traceback.print_exception(e)
         raise ClickException(f"Invalid bank file '{bank}': {e}")
+
+
+@octo_slample.command()
+@click.argument("directory", type=click.Path(exists=True))
+@click.option(
+    "--force",
+    "-f",
+    is_flag=True,
+    help="If true, overwrite an existing bank.json",
+    required=False,
+    type=bool,
+)
+def init(directory: Path, force: bool = False) -> None:
+    """Initialize a sample directory."""
+    try:
+        BankInitializer.init(directory, force)
+        click.echo(f"Initialized sample directory '{directory}'")
+        click.echo(
+            "Bank file can be found at 'bank.json' for name and description updates."
+        )
+    except BankExistsError:
+        raise ClickException(f"Skipping as bank.json already exists in '{directory}'")
+    except OSError as e:
+        raise ClickException(
+            f"Skipping as a {type(e).__name__} occurred while "
+            + f"initializing '{directory}'"
+        )
 
 
 if __name__ == "__main__":
