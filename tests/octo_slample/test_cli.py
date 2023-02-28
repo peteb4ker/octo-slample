@@ -46,6 +46,14 @@ def mock_play_channel(mocker):
     return mocker.patch("octo_slample.cli.Sampler.play_channel")
 
 
+@pytest.fixture
+def mock_wav_writer(mocker):
+    m = mocker.patch("octo_slample.cli.WavWriter.write_bank")
+    m.return_value = ["foo.wav", "bar.wav"]
+
+    return m
+
+
 def test_octo_slample_help():
     runner = CliRunner()
     result = runner.invoke(cli.octo_slample)
@@ -182,3 +190,48 @@ def test_export_help():
     assert "  -b, --bank TEXT            Bank file  [required]" in result.output
     assert "  -n, --bank-number INTEGER  Bank number  [required]" in result.output
     assert "  -o, --output TEXT          Output path  [required]" in result.output
+
+
+def test_export(mock_json_sample_bank, mock_wav_writer):
+    runner = CliRunner()
+    result = runner.invoke(
+        cli.octo_slample,
+        [
+            "export",
+            "--bank",
+            "tests/fixtures/sample_banks/sample_bank.json",
+            "--bank-number",
+            "1",
+            "--output",
+            "tests/fixtures/exported_samples",
+        ],
+    )
+
+    mock_wav_writer.assert_called_once()
+    mock_json_sample_bank.assert_called_once()
+
+    assert result.exit_code == 0, "octo-slample export should exit with code 0"
+    assert "Exporting bank to Squid format..." in result.output
+    assert "Done!" in result.output
+
+
+def test_export_handles_unknown_error(mock_json_sample_bank, mock_wav_writer):
+    runner = CliRunner()
+
+    mock_wav_writer.side_effect = Exception("Unknown Error")
+
+    result = runner.invoke(
+        cli.octo_slample,
+        [
+            "export",
+            "--bank",
+            "tests/fixtures/sample_banks/sample_bank.json",
+            "--bank-number",
+            "1",
+            "--output",
+            "tests/fixtures/exported_samples",
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert "Unknown Error" in result.output
