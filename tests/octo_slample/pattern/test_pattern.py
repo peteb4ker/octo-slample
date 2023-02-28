@@ -10,12 +10,13 @@ def pattern_fixture():
 
 
 def test_pattern_init(pattern_fixture):
-    assert len(pattern_fixture) == DEFAULT_CHANNEL_COUNT
     p = pattern_fixture.pattern
 
-    assert len(p) == DEFAULT_CHANNEL_COUNT
+    assert (
+        len(p) == DEFAULT_CHANNEL_COUNT
+    ), f"Pattern should have {DEFAULT_CHANNEL_COUNT} channels"
     for channel in p:
-        assert len(channel) == DEFAULT_STEP_COUNT
+        assert len(channel) == DEFAULT_STEP_COUNT, "Channel should have 16 steps"
         for step in channel:
             assert step is False
 
@@ -43,12 +44,12 @@ def test_reset_initializes_empty_pattern(pattern_fixture):
 
 
 def test_channel_count_default(pattern_fixture):
-    assert len(pattern_fixture) == DEFAULT_CHANNEL_COUNT
+    assert pattern_fixture.channel_count() == DEFAULT_CHANNEL_COUNT
 
 
 def test_channel_count_custom(pattern_fixture):
-    pattern_fixture.reset(3)
-    assert len(pattern_fixture) == 3
+    pattern_fixture.reset(channel_count=3)
+    assert pattern_fixture.channel_count() == 3
 
 
 def test_pattern_property_getter(pattern_fixture):

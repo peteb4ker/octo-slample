@@ -6,7 +6,7 @@ This class is used to load and store a pattern from a JSON file.
 
 from schema import And, Optional, Schema, Use
 
-from octo_slample.pattern.text_pattern import PATTERN_HEADER, TextPattern
+from octo_slample.pattern.text_pattern import TextPattern
 from octo_slample.sampler.sample_bank import SampleBank
 
 
@@ -88,11 +88,13 @@ class JsonPatternBank:
         # validate JSON pattern
         self.schema.validate(json_pattern)
 
-        # Load pattern list into pattern
-        self._pattern = TextPattern()
-        if json_pattern["pattern"][0] == PATTERN_HEADER:
+        # remove header row
+        if json_pattern["pattern"][0].startswith("1"):
             json_pattern["pattern"].pop(0)
 
+        # Load pattern list into pattern
+        step_count = len(json_pattern["pattern"][0])
+        self._pattern = TextPattern(step_count=step_count)
         self._pattern.pattern = json_pattern["pattern"]
 
         # load samples into channels

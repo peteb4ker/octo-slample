@@ -1,0 +1,25 @@
+{
+    "name": "Organic house 1",
+    "description": "From https://www.attackmagazine.com/technique/beat-dissected/organic-house/",
+    "pattern": [
+        "1234123412341234123412341234123412341234123412341234123412341234",
+        "x   x   x   x   x   x   x   x   x   x   x   x   x   x   x   x   ",
+        "                                                                ",
+        "    x       x       x    x  x       x       x       x    x  x   ",
+        "                                                                ",
+        " xx   x  xx   x  xx   x  xx   x  xx   x  xx   x  xx   x  xx   x ",
+        "                                                                ",
+        "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "                                                                "
+    ],
+    "samples": [
+        { "sample": "wavs/chan-001.wav" },
+        { "sample": "wavs/chan-002.wav" },
+        { "sample": "wavs/chan-003.wav" },
+        { "sample": "wavs/chan-004.wav" },
+        { "sample": "wavs/chan-005.wav" },
+        { "sample": "wavs/chan-006.wav" },
+        { "sample": "wavs/chan-007.wav" },
+        { "sample": "wavs/chan-008.wav" }
+    ]
+}
