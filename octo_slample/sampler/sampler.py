@@ -24,14 +24,13 @@ class Sampler:
     To play a channel, call the `play_channel` method with the channel
     number as an argument.
 
-    To set a channel's sample, call the `set_sample` method with the
-    channel number and the path to the sample as arguments.
+    The `SampleBank` object is dict-like, so channels can be accessed
+    by index. They are one-indexed, so the first channel is at index 1.
+    To access a channels sample:
 
-    To get a channel's sample, call the `get_sample` method with the
-    channel number as an argument.
-
-    To get a channel, call the `get_channel` method with the channel
-    number as an argument.
+    ```
+    sample = sampler[1].sample
+    ```
 
     To get the number of channels, call `len(sampler)`.
     """
@@ -77,7 +76,7 @@ class Sampler:
             self
         ), f"channel must be in range 1-{len(self)}"
 
-        x = threading.Thread(target=self.bank.get_channel(channel).play)
+        x = threading.Thread(target=self.bank[channel].play)
         x.start()
 
     def __len__(self):
