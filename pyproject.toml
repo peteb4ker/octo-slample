@@ -29,6 +29,7 @@ sphinx-click = "^4.4.0"
 flake8-docstrings = "^1.7.0"
 sphinx-autoapi = "^2.0.1"
 pytest-mock = "^3.10.0"
+pytest-lazy-fixture = "^0.6.3"
 
 [build-system]
 requires = ["poetry-core"]
