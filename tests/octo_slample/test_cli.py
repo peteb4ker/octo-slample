@@ -132,7 +132,7 @@ def test_loop_starts_clock_and_loops(mock_looping_sampler):
             "--pattern",
             "patterns/pattern.json",
             "--bank",
-            "banks/sample_bank.json",
+            "banks/empty_sample_bank.json",
             "--bpm",
             "120",
         ],
@@ -201,7 +201,9 @@ def test_pads_help():
 
 def test_pads(mocker, mock_click_getchar, mock_play_channel):
     runner = CliRunner()
-    result = runner.invoke(cli.octo_slample, ["pads", "-b", "banks/sample_bank.json"])
+    result = runner.invoke(
+        cli.octo_slample, ["pads", "-b", "banks/empty_sample_bank.json"]
+    )
 
     assert result.exit_code == 0, "octo-slample pads should exit with code 0"
     assert "Octo Slample" in result.output
@@ -240,7 +242,7 @@ def test_export(mock_bank_exporter_export_bank):
         [
             "export",
             "--bank",
-            "banks/sample_bank.json",
+            "banks/empty_sample_bank.json",
             "--bank-number",
             "1",
             "--output",
@@ -249,7 +251,7 @@ def test_export(mock_bank_exporter_export_bank):
     )
 
     mock_bank_exporter_export_bank.assert_called_once_with(
-        "banks/sample_bank.json", 1, "exported_samples"
+        "banks/empty_sample_bank.json", 1, "exported_samples"
     )
 
     assert result.exit_code == 0, "octo-slample export should exit with code 0"
@@ -269,7 +271,7 @@ def test_export_handles_unknown_error(mock_bank_exporter_export_bank):
         [
             "export",
             "--bank",
-            "banks/sample_bank.json",
+            "banks/empty_sample_bank.json",
             "--bank-number",
             "1",
             "--output",
