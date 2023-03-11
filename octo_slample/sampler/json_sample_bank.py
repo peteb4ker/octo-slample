@@ -76,5 +76,7 @@ class JsonSampleBank(JsonMixin, SampleBank):
         # validate JSON pattern
         self.schema().validate(json_bank)
 
-        # load samples into channels
+        # load samples into channels and set the name
         self.samples = json_bank["samples"]
+        self.name = json_bank["name"]
+        self.description = json_bank.get("description", None)

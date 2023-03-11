@@ -17,6 +17,10 @@ def mock_channel(mocker):
     m = mocker.MagicMock(spec=Channel)
 
     type(m).number = mocker.PropertyMock(side_effect=[0, 1, 2])
+    type(m).sample_path = mocker.PropertyMock(
+        side_effect=["/foo/bar/1.wav", "/foo/bar/2.wav", "/foo/bar/3.wav"]
+    )
+    type(m).name = mocker.PropertyMock(side_effect=["foo", "bar", "baz"])
 
     return m
 
@@ -29,6 +33,7 @@ def mock_sf_write(mocker):
 @pytest.fixture
 def mock_channel_sample_is_none(mock_channel):
     mock_channel.sample = None
+
     return mock_channel
 
 
@@ -37,6 +42,9 @@ def mock_sample_bank(mocker, mock_channel):
     m = mocker.MagicMock(spec=SampleBank)
     m.__getitem__.side_effect = [mock_channel, mock_channel, mock_channel]
     m._channels = [mock_channel, mock_channel, mock_channel]
+    m.name = "Bank1"
+    m.description = "This is a test bank."
+
     return m
 
 
@@ -188,10 +196,13 @@ def test_write_bank(
     expected,
     exception,
 ):
-    expected = [
-        str(tmp_path / expected / wav)
-        for wav in ["chan-001.wav", "chan-002.wav", "chan-003.wav"]
-    ]
+    expected = (
+        str(tmp_path / expected),
+        [
+            str(tmp_path / expected / wav)
+            for wav in ["chan-001.wav", "chan-002.wav", "chan-003.wav"]
+        ],
+    )
 
     with exception:
         result = WavWriter.write_bank(
@@ -207,3 +218,18 @@ def test_write_bank(
                 mocker.call(mock_channel, str(tmp_path / "Bank 1")),
             ]
         )
+
+
+def test_write_info_txt(tmp_path, mock_sample_bank):
+    WavWriter.write_info_txt(mock_sample_bank, str(tmp_path))
+
+    assert (tmp_path / "info.txt").exists()
+
+    with open(str(tmp_path / "info.txt"), "r") as f:
+        contents = f.read()
+
+        assert "Bank1" in contents
+        assert "Description: This is a test bank." in contents
+        assert "0 | foo: /foo/bar/1.wav" in contents
+        assert "1 | bar: /foo/bar/2.wav" in contents
+        assert "2 | baz: /foo/bar/3.wav" in contents

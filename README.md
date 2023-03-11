@@ -193,6 +193,30 @@ poetry run octo-slample export-set ~/samples ~/tmp/Set\ 1
 
 This command will create a folder that can be copied onto the Squid USB drive.
 
+As well as containing correctly named WAV samples, each folder also contains
+`info.txt` with the first 8 ascii characters representing the name of the bank.
+
+The file contains subsequent information for convenience, with the following format:
+
+```vi
+MelodicH
+
+Description: PB - Melodic House
+
+Samples:
+
+0 | XO-1 KICK 1 (processed) 2023-02-23_121815: /Users/pete/Drum kits/XO/PB - Melodic House/XO-1 KICK 1 (processed) 2023-02-23_121815.wav
+1 | XO-2 KICK 2 (processed) 2023-02-23_121815: /Users/pete/Drum kits/XO/PB - Melodic House/XO-2 KICK 2 (processed) 2023-02-23_121815.wav
+2 | XO-3 SNARE (processed) 2023-02-23_121815: /Users/pete/Drum kits/XO/PB - Melodic House/XO-3 SNARE (processed) 2023-02-23_121815.wav
+3 | XO-4 CLAP (processed) 2023-02-23_121815: /Users/pete/Drum kits/XO/PB - Melodic House/XO-4 CLAP (processed) 2023-02-23_121815.wav
+4 | XO-5 CL HH (processed) 2023-02-23_121815: /Users/pete/Drum kits/XO/PB - Melodic House/XO-5 CL HH (processed) 2023-02-23_121815.wav
+5 | XO-6 OP HH (processed) 2023-02-23_121815: /Users/pete/Drum kits/XO/PB - Melodic House/XO-6 OP HH (processed) 2023-02-23_121815.wav
+6 | XO-7 FLEX 1 (processed) 2023-02-23_121815: /Users/pete/Drum kits/XO/PB - Melodic House/XO-7 FLEX 1 (processed) 2023-02-23_121815.wav
+7 | XO-8 FLEX 2 (processed) 2023-02-23_121815: /Users/pete/Drum kits/XO/PB - Melodic House/XO-8 FLEX 2 (processed) 2023-02-23_121815.wav
+
+Created with Octo Slample on 2023-02-27
+```
+
 ### Set the volume on a channel for loop playback
 
 Loop playback volume can be set, per channel, within `pattern.json` files.

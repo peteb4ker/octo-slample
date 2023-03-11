@@ -21,13 +21,69 @@ class SampleBank:
     ```
     """
 
-    def __init__(self, channel_count: int = DEFAULT_CHANNEL_COUNT):
+    def __init__(
+        self,
+        channel_count: int = DEFAULT_CHANNEL_COUNT,
+        name: str = None,
+        description: str = None,
+    ):
         """Initialize the sample bank.
 
         Args:
             channel_count (Optional): The number of channels. Defaults to 8.
+            name (Optional): The name of the sample bank. Defaults to ``None``.
+                If set, only the first 8 characters will be used to conform
+                to the Squid Sample format.
+            description (Optional): The description of the sample bank.
+                Defaults to ``None``.
         """
         self._channels = [Channel(x) for x in range(0, channel_count)]
+        self.name = name
+        self.description = description
+
+    @property
+    def name(self):
+        """The name of the sample bank.
+
+        :getter: Get the name.
+        :setter: Set the name.
+            ``new_name`` must be a ``str``.
+
+        Returns:
+            str: The name of the sample bank.
+        """
+        return self._name
+
+    @name.setter
+    def name(self, new_name: str):
+        """Set the name of the sample bank.
+
+        Args:
+            new_name (str): The new name. Only the first 8 characters will be used.
+        """
+        self._name = new_name[0:8] if new_name and len(new_name) > 8 else new_name
+
+    @property
+    def description(self):
+        """The description of the sample bank.
+
+        :getter: Get the description.
+        :setter: Set the description.
+            ``new_description`` must be a ``str``.
+
+        Returns:
+            str: The description of the sample bank.
+        """
+        return self._description
+
+    @description.setter
+    def description(self, new_description: str):
+        """Set the description of the sample bank.
+
+        Args:
+            new_description (str): The new description.
+        """
+        self._description = new_description
 
     def __getitem__(self, channel: int):
         """Get a channel.

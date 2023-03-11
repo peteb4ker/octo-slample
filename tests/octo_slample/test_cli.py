@@ -80,9 +80,9 @@ def mock_bank_exporter_export_bank(mocker):
 
 
 @pytest.fixture
-def mock_bank_exporter_export_set(mocker):
+def mock_bank_exporter_export_set(mocker, tmp_path):
     m = mocker.patch("octo_slample.cli.BankExporter.export_set")
-    m.return_value = ["foo.wav", "bar.wav"]
+    m.return_value = [(tmp_path, "foo.wav"), (tmp_path, "bar.wav")]
 
     return m
 

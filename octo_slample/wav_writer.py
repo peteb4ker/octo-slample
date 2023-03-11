@@ -18,6 +18,7 @@ Squid Sample requires WAV files to have the following spec:
     -  `chan-00{x}.wav` file format
 """
 
+from datetime import date
 from pathlib import Path
 
 import soundfile as sf
@@ -29,7 +30,6 @@ from octo_slample.sampler.sample_bank import SampleBank
 SQUID_SALMPLE_AUDIO_FORMAT = "WAV"
 SQUID_SALMPLE_WAV_SAMPLE_RATE = 44100
 SQUID_SALMPLE_WAV_SUBTYPE = "PCM_16"
-FFMPEG_EXPORT_PARAMS = ["-ac", "1", "-ar", "44100", "-b:a", "16"]
 
 
 class WavWriter(DirectoryMixin):
@@ -115,7 +115,7 @@ class WavWriter(DirectoryMixin):
     @classmethod
     def write_bank(
         cls, bank: SampleBank, bank_number: int, set_output_path: str | Path
-    ) -> list[str | ValueError]:
+    ) -> tuple[Path, list[str | ValueError]]:
         """Export the bank to the ALM Squid Salmple format.
 
         The bank will be exported to a folder named `Bank {n}` within
@@ -127,7 +127,10 @@ class WavWriter(DirectoryMixin):
             set_output_path (str): The output path to write the set to.
 
         Returns:
-            list[str]: A list of paths of the exported files.
+            tuple[Path, list[str]]: A tuple containing:
+                The path at which the bank is saved
+                A list of paths of the exported files, or ValueError if
+                a sample could not be written.
         """
         assert isinstance(bank, SampleBank), "bank must be a SampleBank"
         assert bank_number >= 1, "bank_number must be 1 or greater"
@@ -143,4 +146,29 @@ class WavWriter(DirectoryMixin):
             cls.write_channel(channel, bank_output_path) for channel in bank._channels
         ]
 
-        return output_paths
+        return (bank_output_path, output_paths)
+
+    @classmethod
+    def write_info_txt(
+        cls, bank: SampleBank, bank_output_directory: str | Path
+    ) -> None:
+        """Write a Squid Sample info.txt file.
+
+        Args:
+            bank (SampleBank): The sample bank to export.
+            bank_output_directory (str|Path): The output path to write the txt file to.
+        """
+        assert isinstance(bank, SampleBank), "bank must be a SampleBank"
+        bank_output_directory = Path(bank_output_directory)
+        assert (
+            bank_output_directory.is_dir()
+        ), "bank_output_directory must be a directory"
+
+        with open(Path(bank_output_directory, "info.txt"), "w") as f:
+            f.write(bank.name + "\n\n")  # 8 characters
+
+            f.write(f"Description: {bank.description}\n\n")
+            f.write("Samples:\n\n")
+            for channel in bank._channels:
+                f.write(f"{channel.number} | {channel.name}: {channel.sample_path}\n")
+            f.write(f"\nCreated with Octo Slample on {date.today()}")

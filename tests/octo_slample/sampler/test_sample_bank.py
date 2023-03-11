@@ -26,9 +26,29 @@ def sample_bank():
 
 def test_sample_bank_default_args(sample_bank):
     assert len(sample_bank._channels) == DEFAULT_CHANNEL_COUNT
+    assert sample_bank.description is None
+    assert sample_bank.name is None
 
     for channel in range(0, DEFAULT_CHANNEL_COUNT):
         assert isinstance(sample_bank._channels[channel], Channel)
+
+
+def test_init_with_custom_name():
+    sample_bank = SampleBank(name="foo")
+
+    assert sample_bank.name == "foo"
+
+
+def test_init_long_name_is_truncated_to_8_chars():
+    sample_bank = SampleBank(name="1234567890")
+
+    assert sample_bank.name == "12345678"
+
+
+def test_init_custom_description():
+    sample_bank = SampleBank(description="This is a description")
+
+    assert sample_bank.description == "This is a description"
 
 
 def test_sample_bank_custom_channel_count():

@@ -17,7 +17,7 @@ class BankExporter(DirectoryMixin):
     @classmethod
     def export_bank(
         self, bank_file: Path, bank_number: int, set_output_path: Path
-    ) -> None:
+    ) -> tuple[Path, list[str | ValueError]]:
         """Export a bank to a set of wav files.
 
         Args:
@@ -26,15 +26,24 @@ class BankExporter(DirectoryMixin):
             set_output_path (Path): The Squid Set output path.
 
         Returns:
-            list[str]: A list of paths of the exported files.
+            tuple[Path, list[str]]: A tuple containing:
+                The path at which the bank is saved
+                A list of paths of the exported files, or ValueError if
+                a sample could not be written.
 
         Raises:
             ValueError: If the bank file does not exist.
             SchemaError: If the bank file is not valid.
         """
-        return WavWriter.write_bank(
-            JsonSampleBank.from_file(bank_file), bank_number, set_output_path
+        bank = JsonSampleBank.from_file(bank_file)
+
+        bank_path, sample_paths = WavWriter.write_bank(
+            bank, bank_number, set_output_path
         )
+
+        WavWriter.write_info_txt(bank, bank_path)
+
+        return bank_path, sample_paths
 
     @classmethod
     def export_set(self, input_directory: Path, output_directory: Path) -> None:
@@ -48,7 +57,10 @@ class BankExporter(DirectoryMixin):
             output_directory (Path): The output path.
 
         Returns:
-            list[str]: A list of paths of the exported banks.
+            list[Tuple[Path, str|ValueError]]: A list of tuples containing:
+                The path at which the bank is saved
+                A list of paths of the exported files, or ValueError if
+                a sample could not be written.
 
         Raises:
             ValueError: If the input directory does not exist.
@@ -68,8 +80,8 @@ class BankExporter(DirectoryMixin):
         for bank_number, bank_directory in enumerate(bank_directories):
             bank_file = next(bank_directory.glob("*.json"))
 
-            squid_banks += self.export_bank(
-                bank_file, bank_number + 1, output_directory
-            )
+            result = self.export_bank(bank_file, bank_number + 1, output_directory)
+
+            squid_banks.append(result)
 
         return squid_banks

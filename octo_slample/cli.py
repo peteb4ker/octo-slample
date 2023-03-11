@@ -175,10 +175,12 @@ def export_set(input_directory: Path, output_directory: Path) -> None:
         BankExporter.create_directory(output_directory)
 
         click.echo(f"- Exporting banks in '{input_directory}' to '{output_directory}'")
-        paths = BankExporter.export_set(input_directory, output_directory)
+        results = BankExporter.export_set(input_directory, output_directory)
 
-        for path in paths:
-            click.echo(f" - {path}")
+        for bank_path, sample_paths in results:
+            click.echo(f" - {bank_path}")
+            for sample_path in sample_paths:
+                click.echo(f"   - {sample_path}")
     except Exception as e:
         traceback.print_exception(e)
         raise ClickException(f"Export error: {e}")
