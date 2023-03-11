@@ -31,7 +31,7 @@ def test_json_sample_bank_schema(json_sample_bank):
 @pytest.mark.parametrize(
     ("pattern", "exception"),
     [
-        ("banks/sample_bank.json", does_not_raise()),
+        ("banks/empty_sample_bank.json", does_not_raise()),
         (
             "banks/invalid/no_name.json",
             pytest.raises(SchemaError),

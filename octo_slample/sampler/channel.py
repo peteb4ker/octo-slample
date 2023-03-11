@@ -172,7 +172,7 @@ class Channel:
             self._sample = None
             return
 
-        assert Path(sample_path).exists(), f"Sample {sample_path} does not exist"
+        assert Path(sample_path).exists(), f"'{sample_path}' does not exist"
 
         # read the sample
         (audio, sample_rate) = sf.read(sample_path, dtype="int16")

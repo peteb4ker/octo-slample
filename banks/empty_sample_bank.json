@@ -1,0 +1,14 @@
+{
+    "name": "EmptyBnk",
+    "description": "Empty bank for testing purposes. Doesn't throw errors when loading.",
+    "samples": [
+        { "path": null },
+        { "path": null },
+        { "path": null },
+        { "path": null },
+        { "path": null },
+        { "path": null },
+        { "path": null },
+        { "path": null }
+    ]
+}

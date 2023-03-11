@@ -1,0 +1,21 @@
+name: Build and test Octo Slample
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: Build docker image
+        run: docker build . -t octo_slample -f ./Dockerfile
+      - name: Lint
+        run: docker run -t octo_slample poetry run flake8
+      - name: Run tests
+        run: docker run -t octo_slample poetry run pytest
