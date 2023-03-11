@@ -1,5 +1,7 @@
 # Octo Slample
 
+[![Build and test Octo Slample](https://github.com/peteb4ker/octo-slample/actions/workflows/docker-image.yml/badge.svg)](https://github.com/peteb4ker/octo-slample/actions/workflows/docker-image.yml)
+
 8-channel virtual sampler for creating and organizing sample packs for the
 ALM Squid Salmple Eurorack sampler.
 
