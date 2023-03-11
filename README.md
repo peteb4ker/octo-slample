@@ -256,6 +256,21 @@ are accepted.
 - Documentation available:
 - Package available:
 
+## Maintenance
+
+To build the dockerfile locally:
+
+```shell
+docker build . -t octo_slample -f Dockerfile
+```
+
+To find the specific versions of packages installed in a `Dockerfile`, needed
+to ensure that the `Dockerfile` passes `hadolint`:
+
+```shell
+docker run -t octo_slample apt list
+```
+
 ## Licence (MIT License)
 
 Copyright © 2023 Pete Baker <peteb4ker@gmail.com>
