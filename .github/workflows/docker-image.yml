@@ -7,12 +7,15 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
-
+    name: build
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: Build docker image
+        run: docker build -t local < .Dockerfile
+      - name: Lint
+        run: docker run -it -v $PWD:/srv -w/srv local poetry run flake8
+      - name: Run tests
+        run: docker run -it -v $PWD:/srv -w/srv local poetry run pytest
